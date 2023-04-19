@@ -1,5 +1,6 @@
 package com.example.myapplication.ui
 
+import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.myapplication.R
 import com.example.myapplication.data.model.Result
 import com.example.myapplication.data.model.TrendingMovies
@@ -82,8 +87,30 @@ class TrendingMovieAdapter(var trendingMoviesModel : TrendingMovies) : RecyclerV
 
     private fun bindTrailerViews(holder: TrailersHolder, trendingMovie: Result) {
 
-        Glide.with(holder.itemView.context)
-            .load("https://image.tmdb.org/t/p/original${trendingMovie.poster_path}")
+        val img: Target<Drawable> = Glide.with(holder.itemView.context)
+            .load("https://image.tmdb.org/t/p/w780${trendingMovie.backdrop_path}")
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    val drawable = resource
+                    return false
+                }
+
+            })
             .into(holder.trailerPosterImg)
 
         holder.txtTrailerTitle.text = trendingMovie.title

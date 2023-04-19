@@ -64,6 +64,7 @@ class HomeMoviesFragment : Fragment() {
         initTrailers(view)
         trailersAdapter = TrendingMovieAdapter(TrendingMovies())
         recyclerTrailers.adapter = trailersAdapter
+
         CoroutineScope(Dispatchers.Main).launch {
             moviesViewModel.getLatestTrailers("now_playing").observe(requireActivity(), Observer {
                 Log.e("Dhaval", "onCreateView: trailers : ${it}", )
@@ -107,5 +108,9 @@ class HomeMoviesFragment : Fragment() {
         recyclerTrailers = view.findViewById(R.id.recycler_latest_trailers) as RecyclerView
         recyclerTrailers.setHasFixedSize(true)
         recyclerTrailers.layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
+    }
+
+    private fun handleClicks(id : Int){
+
     }
 }
