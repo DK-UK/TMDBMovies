@@ -7,12 +7,22 @@ import com.example.myapplication.data.MoviesRepository
 import com.example.myapplication.data.model.TrendingMovies
 
 class MoviesViewModel(private val moviesRepository: MoviesRepository) : ViewModel() {
-    private val moviesMutableLiveData = MutableLiveData(TrendingMovies(0, emptyList(), 0, 0))
-    public val _moviesLiveData : LiveData<TrendingMovies>
-    get() = moviesMutableLiveData
+    private val trendingMoviesMutableLiveData = MutableLiveData(TrendingMovies(0, emptyList(), 0, 0))
+    public val _trendingMoviesLiveData : LiveData<TrendingMovies>
+    get() = trendingMoviesMutableLiveData
 
-    suspend fun getTrendingMovies(mediaType : String, timeWindow : String){
-        moviesMutableLiveData.value = moviesRepository.getTrendingMovies(mediaType, timeWindow)
+    private val popularMoviesMutableLiveData = MutableLiveData(TrendingMovies(0, emptyList(), 0, 0))
+    public val _popularMoviesLiveData : LiveData<TrendingMovies>
+        get() = popularMoviesMutableLiveData
+
+    suspend fun getTrendingMovies(mediaType : String, timeWindow : String) : LiveData<TrendingMovies>{
+        trendingMoviesMutableLiveData.value = moviesRepository.getTrendingMovies(mediaType, timeWindow)
+        return _trendingMoviesLiveData
+    }
+
+    suspend fun getPopularMovies() : LiveData<TrendingMovies> {
+        popularMoviesMutableLiveData.value = moviesRepository.getPopularMovies()
+        return _popularMoviesLiveData
     }
 
 }

@@ -13,4 +13,10 @@ interface ApiCollection {
     suspend fun getTrendingMovies(@Path("media_type") mediaType : String,
                                   @Path("time_window") timeWindow : String,
     @Query("api_key") apiKey : String = BuildConfig.TMDB_API_KEY) : TrendingMovies
+
+    @GET("discover/movie")
+    suspend fun getPopularMovies(@Query("api_key") apiKey : String = BuildConfig.TMDB_API_KEY, @Query("sort_by") sortBy : String = "popularity.desc",
+    @Query("with_watch_providers") withWatchProviders : Int = 8) : TrendingMovies
+
+    /*https://api.themoviedb.org/3/discover/movie?api_key=568fb9ad3b36b1d871df2aa971f14d8c&sort_by=popularity.desc&with_watch_providers=8&media_type=movie*/
 }
