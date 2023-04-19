@@ -20,12 +20,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Trending"
-                android:textColor="@color/black"
+                android:textColor="#232222"
                 android:textSize="18sp"
                 android:padding="5dp"
+                android:textStyle="bold"
                 />
 
-            <TextView
+           <!-- <TextView
                 android:id="@+id/txt_day"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -41,7 +42,7 @@
                 android:padding="5dp"
                 android:text="Week"
                 android:textColor="@color/black"
-                android:textSize="18sp" />
+                android:textSize="18sp" />-->
 
         </LinearLayout>
 
@@ -57,11 +58,32 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Popular"
-            android:textColor="@color/black"
+            android:text="Latest Trailers"
+            android:textColor="#171616"
             android:textSize="18sp"
             android:padding="5dp"
             android:layout_marginTop="5dp"
+            android:textStyle="bold"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_latest_trailers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/latest_trailers"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="What's popular"
+            android:textColor="#171616"
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:layout_marginTop="5dp"
+            android:textStyle="bold"
             />
 
         <androidx.recyclerview.widget.RecyclerView

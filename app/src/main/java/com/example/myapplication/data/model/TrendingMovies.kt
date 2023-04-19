@@ -1,8 +1,11 @@
 package com.example.myapplication.data.model
 
+import com.example.myapplication.utils.Constant
+
 data class TrendingMovies(
-    val page: Int = 0,
+    var type : Int = Constant.TYPE_MOVIE,
+    var page: Int = 0,
     val results: List<Result> = emptyList(),
-    val total_pages: Int = 0,
-    val total_results: Int = 0
+    var total_pages: Int = 0,
+    var total_results: Int = 0
 )

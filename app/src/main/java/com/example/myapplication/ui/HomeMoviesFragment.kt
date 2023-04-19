@@ -1,6 +1,7 @@
 package com.example.myapplication.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import com.example.myapplication.data.ApiCollection
 import com.example.myapplication.data.MoviesRepository
 import com.example.myapplication.data.RetrofitHelper
 import com.example.myapplication.data.model.TrendingMovies
+import com.example.myapplication.utils.Constant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,6 +30,8 @@ class HomeMoviesFragment : Fragment() {
     private lateinit var recyclerPopularMovies : RecyclerView
     private lateinit var popularMovieAdapter : TrendingMovieAdapter
 
+    private lateinit var recyclerTrailers : RecyclerView
+    private lateinit var trailersAdapter : TrendingMovieAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -47,21 +51,35 @@ class HomeMoviesFragment : Fragment() {
 
         //region Trending Movies
         initTrendingMovies(view)
-        val  trendingMovieAdapter = TrendingMovieAdapter(TrendingMovies())
+        trendingMovieAdapter = TrendingMovieAdapter(TrendingMovies())
         recyclerTrendingMovies.adapter = trendingMovieAdapter
         CoroutineScope(Dispatchers.Main).launch {
             moviesViewModel.getTrendingMovies("movie", "day").observe(requireActivity(), Observer {
+                it.type = Constant.TYPE_MOVIE
                 trendingMovieAdapter.refreshMovieList(it)
             })
         }
         //endregion
 
+        initTrailers(view)
+        trailersAdapter = TrendingMovieAdapter(TrendingMovies())
+        recyclerTrailers.adapter = trailersAdapter
+        CoroutineScope(Dispatchers.Main).launch {
+            moviesViewModel.getLatestTrailers("now_playing").observe(requireActivity(), Observer {
+                Log.e("Dhaval", "onCreateView: trailers : ${it}", )
+                it.type = Constant.TYPE_TRAILER
+                Log.e("Dhaval", "onCreateView: after type changed : ${it.type}", )
+                trailersAdapter.refreshMovieList(it)
+            })
+        }
+
         //region Popular Movies
         initPopularMovies(view)
-        val popularMovieAdapter = TrendingMovieAdapter(TrendingMovies())
+        popularMovieAdapter = TrendingMovieAdapter(TrendingMovies())
         recyclerPopularMovies.adapter = popularMovieAdapter
         CoroutineScope(Dispatchers.Main).launch {
             moviesViewModel.getPopularMovies().observe(requireActivity(), Observer {
+                it.type = Constant.TYPE_MOVIE
                 popularMovieAdapter.refreshMovieList(it)
             })
         }
@@ -82,5 +100,12 @@ class HomeMoviesFragment : Fragment() {
         recyclerPopularMovies = view.findViewById(R.id.recycler_popular_movies) as RecyclerView
         recyclerPopularMovies.setHasFixedSize(true)
         recyclerPopularMovies.layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
+    }
+
+    private fun initTrailers(view : View) {
+        trailersAdapter = TrendingMovieAdapter(TrendingMovies())
+        recyclerTrailers = view.findViewById(R.id.recycler_latest_trailers) as RecyclerView
+        recyclerTrailers.setHasFixedSize(true)
+        recyclerTrailers.layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
     }
 }
