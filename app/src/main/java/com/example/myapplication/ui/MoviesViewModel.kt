@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModel
 import com.example.myapplication.data.MoviesRepository
 import com.example.myapplication.data.model.LatestTrailersModel
 import com.example.myapplication.data.model.TrendingMovies
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MoviesViewModel(private val moviesRepository: MoviesRepository) : ViewModel() {
     private val trendingMoviesMutableLiveData = MutableLiveData(TrendingMovies())
@@ -20,19 +23,22 @@ class MoviesViewModel(private val moviesRepository: MoviesRepository) : ViewMode
     public val _latestTrailerLiveData : LiveData<TrendingMovies>
         get() = latestTrailersMutableLiveData
 
-    suspend fun getTrendingMovies(mediaType : String, timeWindow : String) : LiveData<TrendingMovies>{
-        trendingMoviesMutableLiveData.value = moviesRepository.getTrendingMovies(mediaType, timeWindow)
-        return _trendingMoviesLiveData
+    fun getTrendingMovies(mediaType : String, timeWindow : String, page : Int = 1) {
+        CoroutineScope(Dispatchers.Main).launch {
+            trendingMoviesMutableLiveData.value = moviesRepository.getTrendingMovies(mediaType, timeWindow, page)
+        }
     }
 
-    suspend fun getPopularMovies() : LiveData<TrendingMovies> {
-        popularMoviesMutableLiveData.value = moviesRepository.getPopularMovies()
-        return _popularMoviesLiveData
+    fun getPopularMovies(page : Int = 1) {
+        CoroutineScope(Dispatchers.Main).launch {
+            popularMoviesMutableLiveData.value = moviesRepository.getPopularMovies(page = page)
+        }
     }
 
-    suspend fun getLatestTrailers(trailerType : String) : LiveData<TrendingMovies> {
-        latestTrailersMutableLiveData.value = moviesRepository.getLatestTrailer(trailerType)
-        return _latestTrailerLiveData
+    fun getLatestTrailers(trailerType : String, page: Int = 1){
+        CoroutineScope(Dispatchers.Main).launch {
+            latestTrailersMutableLiveData.value = moviesRepository.getLatestTrailer(trailerType, page = page)
+        }
     }
 
     suspend fun getLatestTrailerVideos(movieId : Int) : LatestTrailersModel {
