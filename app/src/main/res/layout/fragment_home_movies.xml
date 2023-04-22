@@ -11,6 +11,91 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <RelativeLayout
+            android:id="@+id/header_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <View
+                android:id="@+id/view_background_header_layout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@color/black"
+                android:alpha="0.7"
+                />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="10dp"
+            >
+
+            <TextView
+                android:id="@+id/txt_welcome_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Welcome."
+                android:textSize="30sp"
+                android:textColor="@color/white"
+                />
+            <TextView
+                android:id="@+id/txt_sub_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_welcome_title"
+                android:text="Millions of movies, TV shows and people to discover. Explore now."
+                android:textSize="25sp"
+                android:textColor="@color/white"
+                />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_sub_title"
+                android:layout_marginTop="10dp"
+                >
+
+                <EditText
+                    android:id="@+id/edit_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="20dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="10dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+
+                    android:background="@drawable/search_view_circular_shape"
+                    />
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Search"
+                    android:layout_alignEnd="@id/edit_search"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/search_view_circular_shape"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:backgroundTint="#2C47DA"
+                    />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/trending_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -54,27 +139,56 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/trending_movies"
             />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/trailers_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/white"
+            >
 
         <TextView
+            android:id="@+id/txt_latest_trailer_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Latest Trailers"
-            android:textColor="#171616"
+            android:textColor="#ffffff"
             android:textSize="18sp"
             android:padding="5dp"
             android:layout_marginTop="5dp"
             android:textStyle="bold"
+            android:elevation="5dp"
             />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_latest_trailers"
+            android:layout_below="@id/txt_latest_trailer_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/latest_trailers"
+            android:elevation="5dp"
             />
 
+            <View
+                android:id="@+id/view_bg_trailer_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/black"
+                android:alpha="0.7"
+                />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/popular_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -94,6 +208,7 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/trending_movies"
             />
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.data.MoviesRepository
+import com.example.myapplication.data.model.LatestTrailersModel
 import com.example.myapplication.data.model.TrendingMovies
 
 class MoviesViewModel(private val moviesRepository: MoviesRepository) : ViewModel() {
@@ -32,6 +33,10 @@ class MoviesViewModel(private val moviesRepository: MoviesRepository) : ViewMode
     suspend fun getLatestTrailers(trailerType : String) : LiveData<TrendingMovies> {
         latestTrailersMutableLiveData.value = moviesRepository.getLatestTrailer(trailerType)
         return _latestTrailerLiveData
+    }
+
+    suspend fun getLatestTrailerVideos(movieId : Int) : LatestTrailersModel {
+        return moviesRepository.getLatestTrailerVideos(movieId)
     }
 
 }
