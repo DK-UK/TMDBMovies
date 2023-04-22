@@ -1,5 +1,6 @@
 package com.example.myapplication.data
 
+import com.example.myapplication.data.model.LatestTrailersModel
 import com.example.myapplication.data.model.TrendingMovies
 
 class MoviesRepository(val apiCollection: ApiCollection) {
@@ -13,5 +14,9 @@ class MoviesRepository(val apiCollection: ApiCollection) {
 
     suspend fun getLatestTrailer(trailer_type : String) : TrendingMovies{
         return apiCollection.getLatestTrailer(trailerType = trailer_type)
+    }
+
+    suspend fun getLatestTrailerVideos(movieId : Int) : LatestTrailersModel{
+        return apiCollection.getLatestTrailerVideos(movieId)
     }
 }

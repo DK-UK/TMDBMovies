@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity() {
         val fragment = HomeMoviesFragment()
         val fragmentTransaction = supportFragmentManager.beginTransaction()
            .add(R.id.home_fragment, fragment)
-           .addToBackStack(null)
            .commit()
     }
 }
