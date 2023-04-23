@@ -94,12 +94,12 @@ class TrendingMovieAdapter(var trendingMoviesModel: TrendingMovies,
 
         Glide.with(holder.itemView.context)
             .load("https://image.tmdb.org/t/p/original${trendingMovie.poster_path}")
+            .error(R.drawable.ic_img_not_available)
             .into(holder.moviePosterImg)
 
         holder.txtMovieTitle.text = trendingMovie.title
         holder.txtMovieReleaseDate.text = convertDate(trendingMovie.release_date)
         holder.trendingMovieLayout.setOnClickListener {
-            Log.e("Dhaval", "bindTrendingMovieViews: clicked")
             handleClick(HandleClicksModel(type = holder.itemViewType, modelClass = trendingMovie))
         }
     }
@@ -118,6 +118,7 @@ class TrendingMovieAdapter(var trendingMoviesModel: TrendingMovies,
 
         Glide.with(holder.itemView.context)
             .load("https://image.tmdb.org/t/p/w780${trendingMovie.backdrop_path}")
+            .error(R.drawable.ic_img_not_available)
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,
@@ -125,7 +126,8 @@ class TrendingMovieAdapter(var trendingMoviesModel: TrendingMovies,
                     target: Target<Drawable>?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    TODO("Not yet implemented")
+
+                    return false
                 }
 
                 override fun onResourceReady(
@@ -164,8 +166,10 @@ class TrendingMovieAdapter(var trendingMoviesModel: TrendingMovies,
     private fun convertDate(dateStr : String) : String{
         val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val outputFormat = SimpleDateFormat("d MMM yy", Locale.getDefault())
-
-        val date = inputFormat.parse(dateStr)
-        return outputFormat.format(date)
+        if (dateStr != null && dateStr.isNotEmpty()) {
+            val date = inputFormat.parse(dateStr)
+            return outputFormat.format(date)
+        }
+        return ""
     }
 }
