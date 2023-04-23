@@ -29,15 +29,15 @@ class MoviesViewModel(private val moviesRepository: MoviesRepository) : ViewMode
         }
     }
 
-    fun getPopularMovies(page : Int = 1) {
+    fun getPopularMovies(mediaType: String = "movie", popularType : String = "now_playing", page : Int = 1) {
         CoroutineScope(Dispatchers.Main).launch {
-            popularMoviesMutableLiveData.value = moviesRepository.getPopularMovies(page = page)
+            popularMoviesMutableLiveData.value = moviesRepository.getPopularMovies(mediaType = mediaType, popularType = popularType, page = page)
         }
     }
 
-    fun getLatestTrailers(trailerType : String, page: Int = 1){
+    fun getLatestTrailers(trailerType : String, mediaType : String = "movie"/*movie or tv*/, page: Int = 1){
         CoroutineScope(Dispatchers.Main).launch {
-            latestTrailersMutableLiveData.value = moviesRepository.getLatestTrailer(trailerType, page = page)
+            latestTrailersMutableLiveData.value = moviesRepository.getLatestTrailer(trailer_type = trailerType, mediaType = mediaType, page = page)
         }
     }
 

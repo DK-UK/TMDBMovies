@@ -15,12 +15,13 @@ interface ApiCollection {
                                   @Path("time_window") timeWindow : String,
     @Query("api_key") apiKey : String = BuildConfig.TMDB_API_KEY, @Query("page") page : Int = 0) : TrendingMovies
 
-    @GET("discover/movie")
-    suspend fun getPopularMovies(@Query("api_key") apiKey : String = BuildConfig.TMDB_API_KEY, @Query("sort_by") sortBy : String = "popularity.desc",
+    @GET("{media_type}/{popular_type}")
+    suspend fun getPopularMovies(@Path("media_type") mediaType: String, @Path("popular_type") popularType : String, @Query("api_key") apiKey : String = BuildConfig.TMDB_API_KEY,
+                                 @Query("sort_by") sortBy : String = "popularity.desc",
     @Query("with_watch_providers") withWatchProviders : Int = 8, @Query("page") page : Int = 1) : TrendingMovies
 
-    @GET("movie/{trailer_type}")
-    suspend fun getLatestTrailer(@Path("trailer_type") trailerType : String, @Query("api_key") apiKey : String = BuildConfig.TMDB_API_KEY,
+    @GET("{mediaType}/{trailer_type}")
+    suspend fun getLatestTrailer(@Path("mediaType") mediaType: String, @Path("trailer_type") trailerType : String, @Query("api_key") apiKey : String = BuildConfig.TMDB_API_KEY,
     @Query("language") language : String = "en-US", @Query("page") page : Int = 1) : TrendingMovies
 
     @GET("movie/{id}/videos")

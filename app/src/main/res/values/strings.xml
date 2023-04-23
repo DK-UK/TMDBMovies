@@ -1,5 +1,14 @@
 <resources>
     <string name="app_name">My Application</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="trending_movie_entries">
+        <item>Today</item>
+        <item>This Week</item>
+    </string-array>
+
+    <string-array name="latest_trailers_spinner">
+        <item>In Theaters</item>
+        <item>On TV</item>
+    </string-array>
 </resources>

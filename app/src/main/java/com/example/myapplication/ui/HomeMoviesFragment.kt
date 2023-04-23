@@ -3,6 +3,7 @@ package com.example.myapplication.ui
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -12,8 +13,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -51,10 +56,15 @@ class HomeMoviesFragment : Fragment() {
     private lateinit var headerLayout: RelativeLayout
     private lateinit var viewBgTrailerLayout: View
 
+    private lateinit var spinnerTrendings: Spinner
+    private lateinit var spinnerTrailers: Spinner
+    private lateinit var spinnerPopulars: Spinner
+
     private var firstCompletelyVisibleItem: Int = 0
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+
+    private var spinnerTrendingSelectedVal : String = "day"
+    private var spinnerTrailerSelectedVal : String = "day"
+    private var spinnerPopularSelectedVal : String = "day"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,14 +72,9 @@ class HomeMoviesFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home_movies, container, false)
-        headerLayout = view.findViewById(R.id.header_layout) as RelativeLayout
-        val trendingLayout = view.findViewById(R.id.trending_layout) as LinearLayout
-        latestTrailersLayout = view.findViewById(R.id.trailers_layout) as RelativeLayout
-        val popularLayout = view.findViewById(R.id.popular_layout) as LinearLayout
-        val viewBgHeaderLayout = view.findViewById(R.id.view_background_header_layout) as View
-        viewBgTrailerLayout = view.findViewById(R.id.view_bg_trailer_layout) as View
 
-        Log.e("Dhaval", "onCreateView: headerLayout height : ${headerLayout.height}")
+        headerLayout = view.findViewById(R.id.header_layout) as RelativeLayout
+        val viewBgHeaderLayout = view.findViewById(R.id.view_background_header_layout) as View
 
         // to calculate the height of the headerLayout
         // when header layout completed then get the height and set to the view for background
@@ -107,6 +112,23 @@ class HomeMoviesFragment : Fragment() {
     }
 
     private fun initTrendingMovies(view: View) {
+        spinnerTrendings = view.findViewById(R.id.spinner_trending_movie) as Spinner
+        spinnerTrendings.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+
+                spinnerTrendingSelectedVal = if (p0?.selectedItem.toString() == resources.getStringArray(R.array.trending_movie_entries)[0]
+                ) {
+                    "day"
+                } else {
+                    "week"
+                }
+                moviesViewModel.getTrendingMovies("all", spinnerTrendingSelectedVal)
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+        }
+
         trendingMovieAdapter = TrendingMovieAdapter(TrendingMovies()) { handleClickModel ->
             handleClicks(handleClickModel)
         }
@@ -115,11 +137,6 @@ class HomeMoviesFragment : Fragment() {
         recyclerTrendingMovies.layoutManager =
             LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
         recyclerTrendingMovies.adapter = trendingMovieAdapter
-
-        CoroutineScope(Dispatchers.Main).launch {
-
-            moviesViewModel.getTrendingMovies("movie", "day")
-        }
 
         moviesViewModel._trendingMoviesLiveData.observe(requireActivity(), Observer {
 
@@ -143,14 +160,14 @@ class HomeMoviesFragment : Fragment() {
                 // get the last element index of trending movies
                 val lastVisibleElement: Int =
                     (recyclerTrendingMovies.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
-                val currentPage : Int = trendingMovieAdapter.trendingMoviesModel.page
-                val totalPages : Int = trendingMovieAdapter.trendingMoviesModel.total_pages
+                val currentPage: Int = trendingMovieAdapter.trendingMoviesModel.page
+                val totalPages: Int = trendingMovieAdapter.trendingMoviesModel.total_pages
 
                 // if we reached to the last element then fetch more movies from next Page
                 if (lastVisibleElement > 0 && lastVisibleElement == (trendingMovieAdapter.itemCount - 1) && totalPages > currentPage) {
                     moviesViewModel.getTrendingMovies(
-                        "movie",
-                        "day",
+                        "all",
+                        spinnerTrendingSelectedVal,
                         page = currentPage + 1
                     )
                 }
@@ -159,7 +176,36 @@ class HomeMoviesFragment : Fragment() {
         })
     }
 
+
     private fun initTrailers(view: View) {
+        viewBgTrailerLayout = view.findViewById(R.id.view_bg_trailer_layout) as View
+        latestTrailersLayout = view.findViewById(R.id.trailers_layout) as RelativeLayout
+        spinnerTrailers = view.findViewById(R.id.spinner_latest_trailers)
+
+        spinnerTrailers.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                val trailerTypeArr = resources.getStringArray(R.array.latest_trailers_spinner)
+
+                spinnerTrailerSelectedVal = when (p0?.selectedItem.toString()){
+                     trailerTypeArr[0] -> {
+                         moviesViewModel.getLatestTrailers("now_playing")
+                         "now_playing"
+                     }
+                    trailerTypeArr[1] -> {
+                        moviesViewModel.getLatestTrailers("on_the_air", "tv")
+                        "on_the_air"
+                    }
+                    else -> {
+                        ""
+                    }
+                }
+                moviesViewModel.getLatestTrailers(spinnerTrailerSelectedVal)
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+        }
+
         trailersAdapter = TrendingMovieAdapter(TrendingMovies()) { handleClickModel ->
             handleClicks(handleClickModel)
         }
@@ -169,9 +215,8 @@ class HomeMoviesFragment : Fragment() {
             LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
         recyclerTrailers.adapter = trailersAdapter
 
-        CoroutineScope(Dispatchers.Main).launch {
-            moviesViewModel.getLatestTrailers("now_playing")
-        }
+        moviesViewModel.getLatestTrailers("now_playing")
+
         moviesViewModel._latestTrailerLiveData.observe(requireActivity(), Observer {
             it.type = Constant.TYPE_TRAILER
 
@@ -195,13 +240,14 @@ class HomeMoviesFragment : Fragment() {
                 // get the last element index of trending movies
                 val lastVisibleElement: Int =
                     (recyclerTrailers.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
-                val currentPage : Int = trailersAdapter.trendingMoviesModel.page
-                val totalPages : Int = trailersAdapter.trendingMoviesModel.total_pages
+                val currentPage: Int = trailersAdapter.trendingMoviesModel.page
+                val totalPages: Int = trailersAdapter.trendingMoviesModel.total_pages
 
                 // if we reached to the last element then fetch more movies from next Page
                 if (lastVisibleElement > 0 && lastVisibleElement == (trailersAdapter.itemCount - 1) && totalPages > currentPage) {
                     moviesViewModel.getLatestTrailers(
-                        "now_playing",
+                        spinnerTrailerSelectedVal,
+                        if(spinnerTrailerSelectedVal.equals("on_the_air")) "tv" else "movie",
                         page = currentPage + 1
                     )
                 }
@@ -211,6 +257,31 @@ class HomeMoviesFragment : Fragment() {
     }
 
     private fun initPopularMovies(view: View) {
+        spinnerPopulars = view.findViewById(R.id.spinner_popular)
+
+        spinnerPopulars.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                val trailerTypeArr = resources.getStringArray(R.array.latest_trailers_spinner)
+
+                spinnerPopularSelectedVal = when (p0?.selectedItem.toString()){
+                    trailerTypeArr[0] -> {
+                        moviesViewModel.getPopularMovies(mediaType = "movie", popularType = "now_playing")
+                        "now_playing"
+                    }
+                    trailerTypeArr[1] -> {
+                        moviesViewModel.getPopularMovies(mediaType = "tv", popularType = "popular")
+                        "popular"
+                    }
+                    else -> {
+                        ""
+                    }
+                }
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+        }
+
         popularMovieAdapter = TrendingMovieAdapter(TrendingMovies()) { handleClickModel ->
             handleClicks(handleClickModel)
         }
@@ -220,9 +291,8 @@ class HomeMoviesFragment : Fragment() {
             LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
         recyclerPopularMovies.adapter = popularMovieAdapter
 
-        CoroutineScope(Dispatchers.Main).launch {
-            moviesViewModel.getPopularMovies()
-        }
+        moviesViewModel.getPopularMovies()
+
         moviesViewModel._popularMoviesLiveData.observe(requireActivity(), Observer {
             it.type = Constant.TYPE_MOVIE
 
@@ -244,12 +314,14 @@ class HomeMoviesFragment : Fragment() {
                 // get the last element index of trending movies
                 val lastVisibleElement: Int =
                     (recyclerPopularMovies.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
-                val currentPage : Int = popularMovieAdapter.trendingMoviesModel.page
-                val totalPages : Int = popularMovieAdapter.trendingMoviesModel.total_pages
+                val currentPage: Int = popularMovieAdapter.trendingMoviesModel.page
+                val totalPages: Int = popularMovieAdapter.trendingMoviesModel.total_pages
 
                 // if we reached to the last element then fetch more movies from next Page
                 if (lastVisibleElement > 0 && lastVisibleElement == (popularMovieAdapter.itemCount - 1) && totalPages > currentPage) {
                     moviesViewModel.getPopularMovies(
+                       mediaType = if (spinnerPopularSelectedVal.equals("now_playing")) "movie" else "tv",
+                        popularType = if(spinnerPopularSelectedVal.equals("now_playing"))"now_playing" else "popular",
                         page = currentPage + 1
                     )
                 }
