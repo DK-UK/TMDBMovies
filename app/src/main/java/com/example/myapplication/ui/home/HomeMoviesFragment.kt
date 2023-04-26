@@ -1,9 +1,8 @@
-package com.example.myapplication.ui
+package com.example.myapplication.ui.home
 
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -14,11 +13,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.AdapterView
-import android.widget.AdapterView.OnItemSelectedListener
-import android.widget.LinearLayout
+import android.widget.Button
+import android.widget.EditText
 import android.widget.RelativeLayout
 import android.widget.Spinner
-import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -31,13 +29,15 @@ import com.example.myapplication.data.RetrofitHelper
 import com.example.myapplication.data.model.HandleClicksModel
 import com.example.myapplication.data.model.MovieResult
 import com.example.myapplication.data.model.TrendingMovies
+import com.example.myapplication.ui.*
+import com.example.myapplication.ui.searchedItem.SearchedItemFragment
+import com.example.myapplication.ui.searchedItem.SearchedItemInterface
 import com.example.myapplication.utils.Constant
-import com.example.myapplication.utils.Utils
+import com.example.myapplication.utils.ShareData
 import com.google.android.material.behavior.HideBottomViewOnScrollBehavior.OnScrollStateChangedListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 
 class HomeMoviesFragment : Fragment() {
@@ -60,12 +60,20 @@ class HomeMoviesFragment : Fragment() {
     private lateinit var spinnerTrailers: Spinner
     private lateinit var spinnerPopulars: Spinner
 
+    private lateinit var editSearch : EditText
+    private lateinit var btnSearch : Button
+
     private var firstCompletelyVisibleItem: Int = 0
+
+    private lateinit var searchedItemInterface: SearchedItemInterface
 
     private var spinnerTrendingSelectedVal : String = "day"
     private var spinnerTrailerSelectedVal : String = "day"
     private var spinnerPopularSelectedVal : String = "day"
 
+    companion object searchedItem{
+        public var searchedItemHashSet : HashSet<String> = HashSet()
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -75,6 +83,8 @@ class HomeMoviesFragment : Fragment() {
 
         headerLayout = view.findViewById(R.id.header_layout) as RelativeLayout
         val viewBgHeaderLayout = view.findViewById(R.id.view_background_header_layout) as View
+        editSearch = view.findViewById(R.id.edit_search)
+        btnSearch = view.findViewById(R.id.btn_search)
 
         // to calculate the height of the headerLayout
         // when header layout completed then get the height and set to the view for background
@@ -108,6 +118,31 @@ class HomeMoviesFragment : Fragment() {
 
         // called in onViewCreated because for very first image to load on trailer background
         setImageToTrailersBackground()
+
+        btnSearch.setOnClickListener {
+            val searchText = editSearch.text.toString().trim()
+            if (searchText.isNotEmpty()){
+                moviesViewModel.getSearchedResults(searchText)
+            }
+        }
+
+        moviesViewModel._seachedResultsLiveData.observe(requireActivity(), Observer {
+            Log.e("Dhaval", "onCreateView: searched : ${it}", )
+
+            if(it.results.size>0) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    it.results.forEach {
+                        searchedItem.searchedItemHashSet?.add(it.media_type!!)
+                    }
+                }
+                ShareData.data = it
+                val fragment = SearchedItemFragment()
+                val fragmentTransaction =
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .replace(R.id.home_fragment, fragment)
+                        .commit()
+            }
+        })
         return view
     }
 
@@ -411,5 +446,9 @@ class HomeMoviesFragment : Fragment() {
 
             setImageToTrailersBackground()
         }
+    }
+
+    public fun setSearchedItemInterfaceListener(searchedItemInterface: SearchedItemInterface){
+        this.searchedItemInterface = searchedItemInterface
     }
 }

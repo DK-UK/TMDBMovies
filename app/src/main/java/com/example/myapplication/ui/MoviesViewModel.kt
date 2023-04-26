@@ -23,6 +23,10 @@ class MoviesViewModel(private val moviesRepository: MoviesRepository) : ViewMode
     public val _latestTrailerLiveData : LiveData<TrendingMovies>
         get() = latestTrailersMutableLiveData
 
+    private val searchedResultsMutableLiveData = MutableLiveData(TrendingMovies())
+    public val _seachedResultsLiveData : LiveData<TrendingMovies>
+        get() = searchedResultsMutableLiveData
+
     fun getTrendingMovies(mediaType : String, timeWindow : String, page : Int = 1) {
         CoroutineScope(Dispatchers.Main).launch {
             trendingMoviesMutableLiveData.value = moviesRepository.getTrendingMovies(mediaType, timeWindow, page)
@@ -43,6 +47,12 @@ class MoviesViewModel(private val moviesRepository: MoviesRepository) : ViewMode
 
     suspend fun getLatestTrailerVideos(movieId : Int) : LatestTrailersModel {
         return moviesRepository.getLatestTrailerVideos(movieId)
+    }
+
+    fun getSearchedResults(query : String, page: Int = 1) {
+        CoroutineScope(Dispatchers.Main).launch {
+            searchedResultsMutableLiveData.value = moviesRepository.getSearchedResults(query, page)
+        }
     }
 
 }
