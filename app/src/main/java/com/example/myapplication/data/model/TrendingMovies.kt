@@ -1,6 +1,7 @@
 package com.example.myapplication.data.model
 
 import com.example.myapplication.utils.Constant
+import java.io.Serializable
 
 data class TrendingMovies(
     var type : Int = Constant.TYPE_MOVIE,

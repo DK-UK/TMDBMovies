@@ -19,4 +19,8 @@ class MoviesRepository(val apiCollection: ApiCollection) {
     suspend fun getLatestTrailerVideos(movieId : Int) : LatestTrailersModel{
         return apiCollection.getLatestTrailerVideos(movieId)
     }
+
+    suspend fun getSearchedResults(query : String, page: Int) : TrendingMovies{
+        return apiCollection.getSearchedResults(query = query)
+    }
 }
