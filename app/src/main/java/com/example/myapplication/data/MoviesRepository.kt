@@ -1,6 +1,8 @@
 package com.example.myapplication.data
 
 import com.example.myapplication.data.model.LatestTrailersModel
+import com.example.myapplication.data.model.Movie
+import com.example.myapplication.data.model.MovieResult
 import com.example.myapplication.data.model.TrendingMovies
 
 class MoviesRepository(val apiCollection: ApiCollection) {
@@ -22,5 +24,9 @@ class MoviesRepository(val apiCollection: ApiCollection) {
 
     suspend fun getSearchedResults(query : String, page: Int) : TrendingMovies{
         return apiCollection.getSearchedResults(query = query)
+    }
+
+    suspend fun getMovieDetails(movieId : Int) : Movie{
+        return apiCollection.getMovieDetails(movieId)
     }
 }

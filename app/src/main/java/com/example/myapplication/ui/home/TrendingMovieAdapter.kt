@@ -91,12 +91,12 @@ class TrendingMovieAdapter(var trendingMoviesModel: TrendingMovies,
         holder.cardMovie.layoutParams = layoutParams
 
         Glide.with(holder.itemView.context)
-            .load("https://image.tmdb.org/t/p/original${trendingMovie.poster_path}")
+            .load(Utils.appendImgPathToUrl(trendingMovie.poster_path))
             .error(R.drawable.ic_img_not_available)
             .into(holder.moviePosterImg)
 
         holder.txtMovieTitle.text = trendingMovie.title
-        holder.txtMovieReleaseDate.text = convertDate(trendingMovie.release_date)
+        holder.txtMovieReleaseDate.text = Utils.convertDate(trendingMovie.release_date, "dd MMM yy")
         holder.trendingMovieLayout.setOnClickListener {
             handleClick(HandleClicksModel(type = holder.itemViewType, modelClass = trendingMovie))
         }
@@ -161,7 +161,7 @@ class TrendingMovieAdapter(var trendingMoviesModel: TrendingMovies,
         notifyDataSetChanged()
     }
 
-    private fun convertDate(dateStr : String) : String{
+   /* private fun convertDate(dateStr : String) : String{
         val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val outputFormat = SimpleDateFormat("d MMM yy", Locale.getDefault())
         if (dateStr != null && dateStr.isNotEmpty()) {
@@ -169,5 +169,5 @@ class TrendingMovieAdapter(var trendingMoviesModel: TrendingMovies,
             return outputFormat.format(date)
         }
         return ""
-    }
+    }*/
 }

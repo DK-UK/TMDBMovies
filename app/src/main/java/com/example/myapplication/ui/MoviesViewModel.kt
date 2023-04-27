@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.data.MoviesRepository
 import com.example.myapplication.data.model.LatestTrailersModel
+import com.example.myapplication.data.model.Movie
+import com.example.myapplication.data.model.MovieResult
 import com.example.myapplication.data.model.TrendingMovies
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +28,10 @@ class MoviesViewModel(private val moviesRepository: MoviesRepository) : ViewMode
     private val searchedResultsMutableLiveData = MutableLiveData(TrendingMovies())
     public val _seachedResultsLiveData : LiveData<TrendingMovies>
         get() = searchedResultsMutableLiveData
+
+    private val movieDetailsMutableLiveData : MutableLiveData<MovieResult> = MutableLiveData()
+    public val _movieDetailsLiveData : LiveData<MovieResult>
+        get() = movieDetailsMutableLiveData
 
     fun getTrendingMovies(mediaType : String, timeWindow : String, page : Int = 1) {
         CoroutineScope(Dispatchers.Main).launch {
@@ -55,4 +61,10 @@ class MoviesViewModel(private val moviesRepository: MoviesRepository) : ViewMode
         }
     }
 
+    suspend fun getMovieDetails(movieId : Int): Movie {
+        return moviesRepository.getMovieDetails(movieId)
+//        CoroutineScope(Dispatchers.Main).launch {
+//            movieDetailsMutableLiveData.value = moviesRepository.getMovieDetails(movieId)
+//        }
+    }
 }
