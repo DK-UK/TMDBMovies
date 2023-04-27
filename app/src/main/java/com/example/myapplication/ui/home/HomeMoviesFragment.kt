@@ -27,9 +27,11 @@ import com.example.myapplication.data.ApiCollection
 import com.example.myapplication.data.MoviesRepository
 import com.example.myapplication.data.RetrofitHelper
 import com.example.myapplication.data.model.HandleClicksModel
+import com.example.myapplication.data.model.Movie
 import com.example.myapplication.data.model.MovieResult
 import com.example.myapplication.data.model.TrendingMovies
 import com.example.myapplication.ui.*
+import com.example.myapplication.ui.movie.MovieFragment
 import com.example.myapplication.ui.searchedItem.SearchedItemFragment
 import com.example.myapplication.ui.searchedItem.SearchedItemInterface
 import com.example.myapplication.utils.Constant
@@ -136,11 +138,12 @@ class HomeMoviesFragment : Fragment() {
                     }
                 }
                 ShareData.data = it
-                val fragment = SearchedItemFragment()
+               /* val fragment = SearchedItemFragment()
                 val fragmentTransaction =
                     requireActivity().supportFragmentManager.beginTransaction()
                         .replace(R.id.home_fragment, fragment)
-                        .commit()
+                        .addToBackStack(null)
+                        fragmentTransaction.commit()*/
             }
         })
         return view
@@ -184,6 +187,7 @@ class HomeMoviesFragment : Fragment() {
             Log.e("Dhaval", "initTrendingMovies: page : ${it.page} -- size : ${it.results.size}")
             trendingMovieAdapter.refreshMovieList(it)
         })
+
 
         recyclerTrendingMovies.setOnScrollChangeListener(object : OnScrollStateChangedListener,
             View.OnScrollChangeListener {
@@ -397,6 +401,27 @@ class HomeMoviesFragment : Fragment() {
                 Log.e("Dhaval", "handleClicks: exception : ${e.toString()}")
             }
         }
+        else if(handleClicksModel.type == Constant.TYPE_MOVIE){
+            try{
+                val movieId : Int = (handleClicksModel.modelClass as MovieResult).id
+                if (movieId > 0){
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val movie : Movie = moviesViewModel.getMovieDetails(movieId)
+                        ShareData.data = movie
+
+                        Log.e("Dhaval", "handleClicks: movie : ${movie}", )
+                        /*val fragment = MovieFragment()
+                        val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+                            .replace(R.id.home_fragment, fragment)
+                            .addToBackStack(null)
+                            .commit()*/
+                    }
+                }
+            }
+            catch (e : java.lang.Exception){
+                Log.e("Dhaval", "handleClicks: exception : ${e.toString()}")
+            }
+        }
     }
 
     private fun setViewHeight(layout: View, view: View) {
@@ -448,7 +473,4 @@ class HomeMoviesFragment : Fragment() {
         }
     }
 
-    public fun setSearchedItemInterfaceListener(searchedItemInterface: SearchedItemInterface){
-        this.searchedItemInterface = searchedItemInterface
-    }
 }

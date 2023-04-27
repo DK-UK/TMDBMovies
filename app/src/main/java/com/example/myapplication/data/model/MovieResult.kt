@@ -1,6 +1,8 @@
 package com.example.myapplication.data.model
 
 import android.graphics.drawable.Drawable
+import android.security.identity.CredentialDataResult
+import android.text.method.MovementMethod
 import com.google.gson.annotations.SerializedName
 
 data class MovieResult(
@@ -17,6 +19,8 @@ data class MovieResult(
     val known_for_department : String,
     @SerializedName(value = "poster_path", alternate = ["profile_path"])
     val poster_path: String,
+    val character: String, // for actor role in movie
+    val job : String, // for crew in movies
     @SerializedName(value = "release_date", alternate = ["first_air_date"]) // for movie and tv type
     val release_date: String,
     @SerializedName(value = "title", alternate = ["name"])
@@ -25,5 +29,9 @@ data class MovieResult(
     val vote_average: Double,
     val vote_count: Int,
     val known_for : List<MovieResult> = emptyList(), // for person type
+    val budget : Long,
+    val tagline : String,
+    val videos : List<LatestTrailersModel> = emptyList(),
+    val credits: Credits,
     var drawable : Drawable? = null
 )

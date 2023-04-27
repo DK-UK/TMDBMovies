@@ -2,6 +2,8 @@ package com.example.myapplication
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
+import androidx.navigation.fragment.NavHostFragment
 import com.example.myapplication.ui.home.HomeMoviesFragment
 
 class MainActivity : AppCompatActivity() {
@@ -10,9 +12,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val fragment = HomeMoviesFragment()
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-           .add(R.id.home_fragment, fragment)
-           .commit()
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.home_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+
     }
 }

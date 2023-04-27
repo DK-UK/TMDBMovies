@@ -2,6 +2,8 @@ package com.example.myapplication.data
 
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.data.model.LatestTrailersModel
+import com.example.myapplication.data.model.Movie
+import com.example.myapplication.data.model.MovieResult
 import com.example.myapplication.data.model.TrendingMovies
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -30,6 +32,10 @@ interface ApiCollection {
     @GET("search/multi")
     suspend fun getSearchedResults(@Query("api_key") apiKey: String = BuildConfig.TMDB_API_KEY,
     @Query("query") query : String, @Query("page") page: Int = 1) : TrendingMovies
+
+    @GET("movie/{movie_id}")
+    suspend fun getMovieDetails(@Path("movie_id") movie_id : Int, @Query("api_key") apiKey: String = BuildConfig.TMDB_API_KEY,
+    @Query("append_to_response") append_to_response : String = "videos,credits") : Movie
 
     //https://api.themoviedb.org/3/search/multi?api_key=568fb9ad3b36b1d871df2aa971f14d8c&language=en-US&query=ally&page=1&include_adult=false
     /*https://api.themoviedb.org/3/movie/now_playing?api_key=568fb9ad3b36b1d871df2aa971f14d8c&language=en-US&page=1*/

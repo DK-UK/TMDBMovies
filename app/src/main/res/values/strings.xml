@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">TMDBMovies</string>
     <!-- TODO: Remove or change this placeholder text -->
 
     <string-array name="trending_movie_entries">
