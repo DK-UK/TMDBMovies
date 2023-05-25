@@ -54,8 +54,9 @@ class SearchedListFragment : Fragment() {
             val model : TrendingMovies = (ShareData.data as TrendingMovies)
 
             val list = model.copy(results = model.results.filter {
+                Log.e("Dhaval", "onCreateView: type : ${it.media_type} -- ${it}", )
                 it.media_type == tabName
-            } as MutableList<MovieResult>)
+            } as MutableList<MovieResult>, type = Constant.TYPE_MOVIE)
 
             adapter.refreshMovieList(list)
 

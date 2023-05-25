@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="7dp"
+    android:layout_margin="5dp"
+    android:elevation="7dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        >
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/season_poster_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            app:srcCompat="@mipmap/ic_launcher"
+            android:layout_alignParentLeft="true"
+            />
+
+        <TextView
+            android:id="@+id/txt_season_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Season 1"
+            android:layout_toRightOf="@+id/season_poster_img"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="16sp"
+
+            />
+
+        <TextView
+            android:id="@+id/txt_season_release_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2023"
+            android:layout_toRightOf="@+id/season_poster_img"
+            android:layout_below="@+id/txt_season_name"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            />
+
+        <TextView
+            android:id="@+id/txt_season_episodes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="| 10 Episodes"
+            android:layout_toRightOf="@+id/txt_season_release_year"
+            android:layout_below="@+id/txt_season_name"
+            android:layout_marginLeft="7dp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            />
+
+        <TextView
+            android:id="@+id/txt_season_overview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Season 2 of From premiered on April 23, 2023."
+            android:layout_toRightOf="@+id/season_poster_img"
+            android:layout_below="@+id/txt_season_release_year"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/default_grey"
+            android:textStyle="normal"
+            android:textSize="14sp"
+            android:maxLines="5"
+            android:ellipsize="end"
+            />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

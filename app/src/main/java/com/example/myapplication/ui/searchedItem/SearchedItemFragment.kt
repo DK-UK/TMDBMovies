@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.myapplication.R
 import com.example.myapplication.ui.home.HomeMoviesFragment
@@ -28,6 +31,13 @@ class SearchedItemFragment : Fragment() {
         // Inflate the layout for this fragment
 
         val view = inflater.inflate(R.layout.fragment_searched_item, container, false)
+        val toolbar : Toolbar = requireActivity().findViewById(R.id.main_toolbar)
+        
+//        toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_back)
+
+//        toolbar.setNavigationOnClickListener {
+//            findNavController().navigate(R.id.action_searchedItemFragment_to_homeMoviesFragment)
+//        }
 
         tabLayout = view.findViewById(R.id.tab_searched_item)
         viewPager = view.findViewById(R.id.viewpager_searched_item)
