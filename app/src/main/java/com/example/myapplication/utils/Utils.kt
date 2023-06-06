@@ -41,6 +41,6 @@ object Utils {
     }
 
     fun appendImgPathToUrl(imgPath : String?) : String{
-        return "https://image.tmdb.org/t/p/original${imgPath}"
+        return "https://image.tmdb.org/t/p/w780${imgPath}"
     }
 }

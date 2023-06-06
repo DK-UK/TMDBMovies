@@ -33,5 +33,8 @@ data class MovieResult(
     val tagline : String,
     val videos : List<LatestTrailersModel> = emptyList(),
     val credits: Credits,
+    val credit_id : String,
+    val order : Int,
+    val episode_count : Int,
     var drawable : Drawable? = null
 )

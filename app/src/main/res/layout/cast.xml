@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="5dp">
+
+    <LinearLayout
+        android:id="@+id/cast_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical"
+        >
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_cast"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="10dp"
+            android:elevation="6dp"
+            >
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/cast_img"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true"
+                app:srcCompat="@mipmap/ic_launcher"
+                />
+        </androidx.cardview.widget.CardView>
+        <TextView
+            android:id="@+id/txt_cast_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Antman and the Wasp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            />
+
+        <TextView
+            android:id="@+id/txt_character_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="scott atkins"
+            android:textSize="14sp"
+            android:layout_marginLeft="5dp"
+            android:textColor="@color/default_grey"
+            />
+
+        <!--<TextView
+            android:id="@+id/txt_character_episodes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="14sp"
+            android:layout_marginLeft="5dp"
+            android:textColor="@color/default_grey"
+            />-->
+
+    </LinearLayout>
+</RelativeLayout>

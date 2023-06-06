@@ -16,15 +16,62 @@
         <action
             android:id="@+id/action_homeMoviesFragment_to_searchedItemFragment"
             app:destination="@id/searchedItemFragment" />
+        <action
+            android:id="@+id/action_homeMoviesFragment_to_tvSeriesFragment"
+            app:destination="@id/tvSeriesFragment" />
     </fragment>
     <fragment
         android:id="@+id/movieFragment"
         android:name="com.example.myapplication.ui.movie.MovieFragment"
         android:label="fragment_movie"
-        tools:layout="@layout/fragment_movie" />
+        tools:layout="@layout/fragment_movie" >
+        <action
+            android:id="@+id/action_movieFragment_to_homeMoviesFragment"
+            app:destination="@id/homeMoviesFragment" />
+        <action
+            android:id="@+id/action_movieFragment_self"
+            app:destination="@id/movieFragment" />
+        <action
+            android:id="@+id/action_movieFragment_to_personFragment"
+            app:destination="@id/personFragment" />
+    </fragment>
     <fragment
         android:id="@+id/searchedItemFragment"
         android:name="com.example.myapplication.ui.searchedItem.SearchedItemFragment"
         android:label="fragment_searched_item"
-        tools:layout="@layout/fragment_searched_item" />
+        tools:layout="@layout/fragment_searched_item" >
+        <action
+            android:id="@+id/action_searchedItemFragment_to_tvSeriesFragment"
+            app:destination="@id/tvSeriesFragment" />
+        <action
+            android:id="@+id/action_searchedItemFragment_to_movieFragment"
+            app:destination="@id/movieFragment" />
+        <action
+            android:id="@+id/action_searchedItemFragment_to_personFragment"
+            app:destination="@id/personFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tvSeriesFragment"
+        android:name="com.example.myapplication.ui.tv.TvSeriesFragment"
+        android:label="fragment_tv_series"
+        tools:layout="@layout/fragment_tv_series" >
+        <action
+            android:id="@+id/action_tvSeriesFragment_self"
+            app:destination="@id/tvSeriesFragment" />
+        <action
+            android:id="@+id/action_tvSeriesFragment_to_personFragment"
+            app:destination="@id/personFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/personFragment"
+        android:name="com.example.myapplication.ui.person.PersonFragment"
+        android:label="fragment_person"
+        tools:layout="@layout/fragment_person" >
+        <action
+            android:id="@+id/action_personFragment_to_movieFragment"
+            app:destination="@id/movieFragment" />
+        <action
+            android:id="@+id/action_personFragment_to_tvSeriesFragment"
+            app:destination="@id/tvSeriesFragment" />
+    </fragment>
 </navigation>

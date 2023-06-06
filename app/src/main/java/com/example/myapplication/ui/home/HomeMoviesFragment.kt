@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
+
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -20,6 +21,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
@@ -30,10 +32,8 @@ import com.example.myapplication.data.model.HandleClicksModel
 import com.example.myapplication.data.model.Movie
 import com.example.myapplication.data.model.MovieResult
 import com.example.myapplication.data.model.TrendingMovies
+import com.example.myapplication.data.model.tv.TvDetails
 import com.example.myapplication.ui.*
-import com.example.myapplication.ui.movie.MovieFragment
-import com.example.myapplication.ui.searchedItem.SearchedItemFragment
-import com.example.myapplication.ui.searchedItem.SearchedItemInterface
 import com.example.myapplication.utils.Constant
 import com.example.myapplication.utils.ShareData
 import com.google.android.material.behavior.HideBottomViewOnScrollBehavior.OnScrollStateChangedListener
@@ -56,6 +56,7 @@ class HomeMoviesFragment : Fragment() {
     private lateinit var latestTrailersLayout: RelativeLayout
 
     private lateinit var headerLayout: RelativeLayout
+    private lateinit var viewBgHeaderLayout : View
     private lateinit var viewBgTrailerLayout: View
 
     private lateinit var spinnerTrendings: Spinner
@@ -67,11 +68,12 @@ class HomeMoviesFragment : Fragment() {
 
     private var firstCompletelyVisibleItem: Int = 0
 
-    private lateinit var searchedItemInterface: SearchedItemInterface
 
     private var spinnerTrendingSelectedVal : String = "day"
     private var spinnerTrailerSelectedVal : String = "day"
     private var spinnerPopularSelectedVal : String = "day"
+    private var popularCategoryMediaType : String = "movie"
+    private var trailerMediaType : String = "movie"
 
     companion object searchedItem{
         public var searchedItemHashSet : HashSet<String> = HashSet()
@@ -83,8 +85,9 @@ class HomeMoviesFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home_movies, container, false)
 
+        Log.e("Dhaval", "onCreateView: homeMovieFragment", )
         headerLayout = view.findViewById(R.id.header_layout) as RelativeLayout
-        val viewBgHeaderLayout = view.findViewById(R.id.view_background_header_layout) as View
+        viewBgHeaderLayout = view.findViewById(R.id.view_background_header_layout)
         editSearch = view.findViewById(R.id.edit_search)
         btnSearch = view.findViewById(R.id.btn_search)
 
@@ -132,18 +135,12 @@ class HomeMoviesFragment : Fragment() {
             Log.e("Dhaval", "onCreateView: searched : ${it}", )
 
             if(it.results.size>0) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    it.results.forEach {
-                        searchedItem.searchedItemHashSet?.add(it.media_type!!)
-                    }
-                }
                 ShareData.data = it
-               /* val fragment = SearchedItemFragment()
-                val fragmentTransaction =
-                    requireActivity().supportFragmentManager.beginTransaction()
-                        .replace(R.id.home_fragment, fragment)
-                        .addToBackStack(null)
-                        fragmentTransaction.commit()*/
+
+                it.results.forEach {movieResult ->
+                    searchedItem.searchedItemHashSet.add(movieResult.media_type.toString())
+                }
+                findNavController().navigate(R.id.action_homeMoviesFragment_to_searchedItemFragment)
             }
         })
         return view
@@ -228,10 +225,12 @@ class HomeMoviesFragment : Fragment() {
                 spinnerTrailerSelectedVal = when (p0?.selectedItem.toString()){
                      trailerTypeArr[0] -> {
                          moviesViewModel.getLatestTrailers("now_playing")
+                         trailerMediaType = "movie"
                          "now_playing"
                      }
                     trailerTypeArr[1] -> {
                         moviesViewModel.getLatestTrailers("on_the_air", "tv")
+                        trailerMediaType = "tv"
                         "on_the_air"
                     }
                     else -> {
@@ -305,10 +304,12 @@ class HomeMoviesFragment : Fragment() {
                 spinnerPopularSelectedVal = when (p0?.selectedItem.toString()){
                     trailerTypeArr[0] -> {
                         moviesViewModel.getPopularMovies(mediaType = "movie", popularType = "now_playing")
+                        popularCategoryMediaType = "movie"
                         "now_playing"
                     }
                     trailerTypeArr[1] -> {
                         moviesViewModel.getPopularMovies(mediaType = "tv", popularType = "popular")
+                        popularCategoryMediaType = "tv"
                         "popular"
                     }
                     else -> {
@@ -350,7 +351,7 @@ class HomeMoviesFragment : Fragment() {
             }
 
             override fun onScrollChange(p0: View?, p1: Int, p2: Int, p3: Int, p4: Int) {
-                // get the last element index of trending movies
+                // get the last element index of popular movies
                 val lastVisibleElement: Int =
                     (recyclerPopularMovies.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
                 val currentPage: Int = popularMovieAdapter.trendingMoviesModel.page
@@ -359,7 +360,7 @@ class HomeMoviesFragment : Fragment() {
                 // if we reached to the last element then fetch more movies from next Page
                 if (lastVisibleElement > 0 && lastVisibleElement == (popularMovieAdapter.itemCount - 1) && totalPages > currentPage) {
                     moviesViewModel.getPopularMovies(
-                       mediaType = if (spinnerPopularSelectedVal.equals("now_playing")) "movie" else "tv",
+                       mediaType = popularCategoryMediaType,
                         popularType = if(spinnerPopularSelectedVal.equals("now_playing"))"now_playing" else "popular",
                         page = currentPage + 1
                     )
@@ -371,6 +372,8 @@ class HomeMoviesFragment : Fragment() {
 
 
     private fun handleClicks(handleClicksModel: HandleClicksModel): Unit {
+
+        Log.e("Dhaval", "handleClicks: ${handleClicksModel}", )
         if (handleClicksModel.type == Constant.TYPE_TRAILER) {
 
             try {
@@ -378,7 +381,7 @@ class HomeMoviesFragment : Fragment() {
                 if (handleClicksModel.isItemClicked) {
                     CoroutineScope(Dispatchers.Main).launch {
                         val result =
-                            moviesViewModel.getLatestTrailerVideos((handleClicksModel.modelClass as MovieResult).id).results.filter {
+                            moviesViewModel.getLatestTrailerVideos(trailerMediaType, (handleClicksModel.modelClass as MovieResult).id).results.filter {
                                 it.type == "Trailer" || it.type == "Teaser"
                             }
                         val movieKey: String = result[0].key
@@ -403,18 +406,42 @@ class HomeMoviesFragment : Fragment() {
         }
         else if(handleClicksModel.type == Constant.TYPE_MOVIE){
             try{
-                val movieId : Int = (handleClicksModel.modelClass as MovieResult).id
-                if (movieId > 0){
-                    CoroutineScope(Dispatchers.Main).launch {
-                        val movie : Movie = moviesViewModel.getMovieDetails(movieId)
-                        ShareData.data = movie
+                val movieResult = handleClicksModel.modelClass as MovieResult
+                // if media_type is null then its popular category
+                // whether its movie or tv
+                // there is a different end points for movie and tv so thats why
+                // media_type returns null as default
+                if ((movieResult.media_type == null && popularCategoryMediaType == "movie") || movieResult.media_type == "movie") {
+                    val movieId: Int = movieResult.id
+                    if (movieId > 0) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            val movie: Movie = moviesViewModel.getMovieDetails(movieId)
+                            ShareData.data = movie
 
-                        Log.e("Dhaval", "handleClicks: movie : ${movie}", )
-                        /*val fragment = MovieFragment()
+                            findNavController().navigate(R.id.action_homeMoviesFragment_to_movieFragment)
+                            Log.e("Dhaval", "handleClicks: movie : ${movie}",)
+                            /*val fragment = MovieFragment()
                         val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
                             .replace(R.id.home_fragment, fragment)
                             .addToBackStack(null)
                             .commit()*/
+                        }
+                    }
+                }
+                else{
+                    val tvId : Int = movieResult.id
+                    if (tvId > 0){
+                        CoroutineScope(Dispatchers.Main).launch {
+                            val tvSeries : TvDetails = moviesViewModel.getTVDetails(tvId)
+                            ShareData.data = tvSeries
+
+                            findNavController().navigate(R.id.action_homeMoviesFragment_to_tvSeriesFragment)
+                            /*val fragment = MovieFragment()
+                            val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+                                .replace(R.id.home_fragment, fragment)
+                                .addToBackStack(null)
+                                .commit()*/
+                        }
                     }
                 }
             }
@@ -442,7 +469,7 @@ class HomeMoviesFragment : Fragment() {
             intent.setPackage("com.google.android.youtube");
             startActivity(intent)
         } catch (e: ActivityNotFoundException) {
-            Toast.makeText(requireActivity(), "You dont have Youtube installed", Toast.LENGTH_LONG)
+            Toast.makeText(requireActivity(), "You don't have Youtube installed", Toast.LENGTH_LONG)
                 .show()
         }
     }
@@ -464,9 +491,14 @@ class HomeMoviesFragment : Fragment() {
     }
 
     private fun setHeaderBgImage(trendingMovieImg: Drawable?) {
+        Log.e("Dhaval", "setHeaderBgImage: header bg : ${headerLayout.background}", )
         if (headerLayout != null && headerLayout.background == null) {
+
             trendingMovieImg?.let {
-                headerLayout.background = trendingMovieImg
+                Log.e("Dhaval", "setHeaderBgImage: height : ${headerLayout.height} -- width : ${headerLayout.width}", )
+                headerLayout.background = it
+//                headerLayout.background = requireActivity().getDrawable(R.drawable.ic_launcher_background)
+//                headerLayout.setBackgroundColor(requireActivity().getColor(R.color.purple_200))
             }
 
             setImageToTrailersBackground()

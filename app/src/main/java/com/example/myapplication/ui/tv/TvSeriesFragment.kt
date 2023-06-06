@@ -1,24 +1,22 @@
-package com.example.myapplication.ui.movie
+package com.example.myapplication.ui.tv
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
-import android.widget.LinearLayout.LayoutParams
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.*
-import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+
 import com.example.myapplication.R
 import com.example.myapplication.data.ApiCollection
 import com.example.myapplication.data.MoviesRepository
@@ -28,22 +26,24 @@ import com.example.myapplication.data.model.tv.TvDetails
 import com.example.myapplication.ui.MoviesViewModel
 import com.example.myapplication.ui.home.MoviesFactory
 import com.example.myapplication.ui.home.TrendingMovieAdapter
-import com.example.myapplication.utils.Constant
+import com.example.myapplication.ui.movie.CastAdapter
 import com.example.myapplication.utils.ShareData
 import com.example.myapplication.utils.Utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.w3c.dom.Text
 
-class MovieFragment : Fragment() {
 
-    private var movieDetails : Movie? = null
+class TvSeriesFragment : Fragment() {
+
+    private var tvDetails : TvDetails? = null
     private lateinit var recyclerMovieCast : RecyclerView
     private lateinit var castAdapter : CastAdapter
 
-    private lateinit var recyclerMovieRecommendation : RecyclerView
-    private lateinit var movieRecommendationAdapter : TrendingMovieAdapter
+    private lateinit var recyclerTVSeriesRecommendation : RecyclerView
+    private lateinit var tvSeriesRecommendationAdapter : TrendingMovieAdapter
+    private lateinit var recyclerTVSeason : RecyclerView
+    private lateinit var tVSeasonAdapter: TVSeasonAdapter
     private lateinit var viewModel: MoviesViewModel
 
     // recommendations
@@ -53,10 +53,10 @@ class MovieFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         if (ShareData.data != null){
-            movieDetails = ShareData.data as Movie
-        }
+            tvDetails = ShareData.data as TvDetails
 
-        Log.e("Dhaval", "onCreate: MovieFragment : ${movieDetails}", )
+            Log.e("Dhaval", "onCreate: tvDetails : ${tvDetails}", )
+        }
     }
 
     override fun onCreateView(
@@ -64,9 +64,7 @@ class MovieFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_movie, container, false)
-
-        Log.e("Dhaval", "onCreateView: MovieFragment", )
+        val view = inflater.inflate(R.layout.fragment_tv_series, container, false)
 
         val apiCollection: ApiCollection =
             RetrofitHelper.getRetrofit().create(ApiCollection::class.java)
@@ -75,48 +73,51 @@ class MovieFragment : Fragment() {
             ViewModelProvider(this, MoviesFactory(moviesRepository))[MoviesViewModel::class.java]
 
         // movie header layout
-        val imgMoviePoster : ImageView = view.findViewById(R.id.img_movie_poster)
-        val txtMovieTitle : TextView = view.findViewById(R.id.txt_movie_title)
-        val txtMovieTrailer : TextView = view.findViewById(R.id.txt_movie_trailer)
-        val txtMovieReleaseYear : TextView = view.findViewById(R.id.txt_movie_release_year)
-        val progressMovieRating : ProgressBar = view.findViewById(R.id.progress_movie_vote)
-        val txtMovieVote : TextView = view.findViewById(R.id.txt_movie_vote_perc)
-        val txtMovieDateAndRuntime : TextView = view.findViewById(R.id.txt_date_and_runtime)
-        val txtMovieGenre : TextView = view.findViewById(R.id.txt_movie_genre)
-        val txtMovieTagLine : TextView = view.findViewById(R.id.txt_movie_tagline)
-        val txtMovieOverview : TextView = view.findViewById(R.id.txt_movie_overview)
+        val imgTVPoster : ImageView = view.findViewById(R.id.img_movie_poster)
+        val txtTVTitle : TextView = view.findViewById(R.id.txt_movie_title)
+        val txtTVTrailer : TextView = view.findViewById(R.id.txt_movie_trailer)
+        val txtTVReleaseYear : TextView = view.findViewById(R.id.txt_movie_release_year)
+        val progressTVRating : ProgressBar = view.findViewById(R.id.progress_movie_vote)
+        val txtTVVote : TextView = view.findViewById(R.id.txt_movie_vote_perc)
+        val txtTVDateAndRuntime : TextView = view.findViewById(R.id.txt_date_and_runtime)
+        val txtTVGenre : TextView = view.findViewById(R.id.txt_movie_genre)
+        val txtTVTagLine : TextView = view.findViewById(R.id.txt_movie_tagline)
+        val txtTVOverview : TextView = view.findViewById(R.id.txt_movie_overview)
+        val txtViewAllSeasons : TextView = view.findViewById(R.id.txt_view_all_seasons)
+        val seasonLayout : LinearLayout = view.findViewById(R.id.season_layout)
         recommendationLayout = view.findViewById(R.id.recommendation_layout)
 
-        val imgWidth = (Utils.getScreenWidth() / 2) - 50
-        val params = LayoutParams(MATCH_PARENT, imgWidth)
-        imgMoviePoster.layoutParams = params
+        val height = (Utils.getScreenWidth() / 2) - 50
+        val params = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+        imgTVPoster.layoutParams = params
 
         initTopBilledCast(view)
 
-        movieDetails?.let {movie ->
+        initTVSeasons(view)
+
+        tvDetails?.let { tv ->
             try {
                 Glide.with(requireActivity())
-                    .load(Utils.appendImgPathToUrl(movie.backdrop_path))
+                    .load(Utils.appendImgPathToUrl(tv.backdrop_path))
                     .error(R.drawable.ic_img_not_available)
-                    .into(imgMoviePoster)
+                    .into(imgTVPoster)
 
-                txtMovieTitle.text = movie.title
-                txtMovieReleaseYear.text = "(" + movie.release_date.let {
-                    Utils.convertDate(movie.release_date, "yyyy")
-                }.toString() + ")"
+                txtTVTitle.text = tv.original_name
+                txtTVReleaseYear.text = "(${Utils.convertDate(tv.first_air_date, "yyyy")})"
 
-                progressMovieRating.max = 10
-                progressMovieRating.progress = movie.vote_average.toInt()
-                progressMovieRating.isIndeterminate = false
+                progressTVRating.max = 10
+                progressTVRating.progress = tv.vote_average.toInt()
+                progressTVRating.isIndeterminate = false
 
-                txtMovieTrailer.setOnClickListener {
+                txtTVTrailer.setOnClickListener {
 
                     CoroutineScope(Dispatchers.Main).launch {
                         val result =
-                            viewModel.getLatestTrailerVideos("movie", movie.id).results.filter {
+                            viewModel.getLatestTrailerVideos("tv", tv.id).results.filter {
                                 Log.e("Dhaval", "onCreateView: trailer video : ${it}", )
                                 it.type.lowercase() == "trailer" || it.type.lowercase() == "teaser"
                             }
+
                         result.let {
                             if (it.size > 0){
                                 val movieKey: String = result[0].key
@@ -130,51 +131,85 @@ class MovieFragment : Fragment() {
                         }
                     }
                 }
-                txtMovieVote.text = "${(movie.vote_average * 10).toInt()}%"
+                txtTVVote.text = "${(tv.vote_average * 10).toInt()}%"
 
-                txtMovieDateAndRuntime.text = "${
+                txtTVDateAndRuntime.text = "${
                     Utils.convertDate(
-                        movie.release_date,
+                        tv.first_air_date,
                         "dd/MM/yyyy"
                     )
-                } @ ${Utils.formatDuration(movie.runtime)}"
+                }"/* @ ${Utils.formatDuration(tv.episode_run_time.)}"*/
 
-                txtMovieGenre.text = movie.genres.joinToString {
+                txtTVGenre.text = tv.genres.joinToString {
                     it.name
                 }
 
-                txtMovieTagLine.text = movie.tagline
+                txtTVTagLine.text = tv.tagline
 
-                txtMovieOverview.text = movie.overview
+                txtTVOverview.text = tv.overview
 
-                castAdapter = CastAdapter(movie.credits.cast){
+                castAdapter = CastAdapter(tv.credits.cast){
                     handleClicks(it)
                 }
                 recyclerMovieCast.adapter = castAdapter
 
+                tv.seasons.let {
+
+                    if (it.isNotEmpty()){
+                        seasonLayout.visibility = View.VISIBLE
+                        tVSeasonAdapter.refreshMovieList(tv.seasons.take(1))
+                    }
+
+                    if(it.size > 1){
+                        txtViewAllSeasons.visibility = View.VISIBLE
+
+                        txtViewAllSeasons.setOnClickListener {
+                            if (tVSeasonAdapter.itemCount > 1){
+                                txtViewAllSeasons.text = "Show All Seasons"
+                                tVSeasonAdapter.refreshMovieList(tv.seasons.take(1))
+                            }
+                            else{
+                                txtViewAllSeasons.text = "Hide Seasons"
+                                tVSeasonAdapter.refreshMovieList(tv.seasons)
+                            }
+                        }
+                    }
+                    else{
+                        txtViewAllSeasons.visibility = View.GONE
+                    }
+                }
+
                 CoroutineScope(Dispatchers.Main).launch {
-                    viewModel.getMovieRecommendations("movie", movie.id)
+                    viewModel.getMovieRecommendations("tv", tv.id)
                 }
             }
-            catch (e : java.lang.Exception){
+            catch (e : Exception){
                 Log.e("Dhaval", "onCreateView: exception : ${e.toString()}", )
             }
         }
 
         initMovieRecommendations(view)
 
-
         return view
     }
 
-    private fun initMovieRecommendations(view: View) {
-        recyclerMovieRecommendation = view.findViewById(R.id.recycler_movie_recommendations)
-        recyclerMovieRecommendation.setHasFixedSize(true)
+    private fun initTVSeasons(view: View) {
+        recyclerTVSeason = view.findViewById(R.id.recycler_tv_seasons)
+        recyclerTVSeason.setHasFixedSize(true)
+        recyclerTVSeason.layoutManager = LinearLayoutManager(requireContext())
 
-        movieRecommendationAdapter = TrendingMovieAdapter(TrendingMovies()) {
+        tVSeasonAdapter = TVSeasonAdapter(emptyList())
+        recyclerTVSeason.adapter = tVSeasonAdapter
+    }
+
+    private fun initMovieRecommendations(view: View) {
+        recyclerTVSeriesRecommendation = view.findViewById(R.id.recycler_movie_recommendations)
+        recyclerTVSeriesRecommendation.setHasFixedSize(true)
+
+        tvSeriesRecommendationAdapter = TrendingMovieAdapter(TrendingMovies()) {
             handleClicks(it)
         }
-        recyclerMovieRecommendation.adapter = movieRecommendationAdapter
+        recyclerTVSeriesRecommendation.adapter = tvSeriesRecommendationAdapter
 
         viewModel._movieRecommendationsLiveData.observe(requireActivity(), Observer {
             it?.let {
@@ -182,7 +217,7 @@ class MovieFragment : Fragment() {
 
                 if (it.results.isNotEmpty()) {
                     recommendationLayout.visibility = View.VISIBLE
-                    movieRecommendationAdapter.refreshMovieList(it)
+                    tvSeriesRecommendationAdapter.refreshMovieList(it)
                 }
             }
         })
@@ -201,14 +236,13 @@ class MovieFragment : Fragment() {
         try{
             val movieResult = handleClicksModel.modelClass as MovieResult
 
-                val movieId: Int = movieResult.id
-                if (movieId > 0) {
+                val tvId : Int = movieResult.id
+                if (tvId > 0){
                     CoroutineScope(Dispatchers.Main).launch {
-                        val movie: Movie = viewModel.getMovieDetails(movieId)
-                        ShareData.data = movie
+                        val tvSeries : TvDetails = viewModel.getTVDetails(tvId)
+                        ShareData.data = tvSeries
 
-                        findNavController().navigate(R.id.action_movieFragment_self)
-                        Log.e("Dhaval", "handleClicks: movie : ${movie}",)
+                        findNavController().navigate(R.id.action_tvSeriesFragment_self)
                     }
                 }
         }
@@ -218,9 +252,9 @@ class MovieFragment : Fragment() {
             val cast = handleClicksModel.modelClass as Cast
             Log.e("Dhaval", "handleClicks: cast : ${cast.character}", )
 
-             val id = cast.id
+            val id = cast.id
             ShareData.data = id
-            findNavController().navigate(R.id.action_movieFragment_to_personFragment)
+            findNavController().navigate(R.id.action_tvSeriesFragment_to_personFragment)
         }
     }
 
@@ -236,5 +270,6 @@ class MovieFragment : Fragment() {
                 .show()
         }
     }
+
 
 }
