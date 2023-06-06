@@ -3,4 +3,5 @@ package com.example.myapplication.utils
      val TYPE_MOVIE = 0
      val TYPE_TRAILER = 1
      val TYPE_TV = 2
+
 }

@@ -13,9 +13,11 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.data.model.Cast
+import com.example.myapplication.data.model.HandleClicksModel
 import com.example.myapplication.utils.Utils
 
-class CastAdapter(val casts : List<Cast>) : RecyclerView.Adapter<CastAdapter.viewHolder>() {
+class CastAdapter(val casts : List<Cast>,
+                  private val handleClick : (HandleClicksModel) -> Unit) : RecyclerView.Adapter<CastAdapter.viewHolder>() {
 
     public class viewHolder(view: View) : ViewHolder(view){
         val castPosterImg = view.findViewById(R.id.cast_img) as ImageView
@@ -53,5 +55,9 @@ class CastAdapter(val casts : List<Cast>) : RecyclerView.Adapter<CastAdapter.vie
         holder.txtCastName.text = cast.name
         holder.txtCastCharacterName.text = cast.character
 //        holder.txtCaracterEpisodes.text = ""
+
+        holder.cardMovie.setOnClickListener {
+            handleClick(HandleClicksModel(false, 0, cast))
+        }
     }
 }

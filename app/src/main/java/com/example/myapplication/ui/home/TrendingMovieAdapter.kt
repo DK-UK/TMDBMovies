@@ -114,7 +114,7 @@ class TrendingMovieAdapter(var trendingMoviesModel: TrendingMovies,
         holder.cardTrailers.layoutParams = layoutParams
 
         Glide.with(holder.itemView.context)
-            .load("https://image.tmdb.org/t/p/w780${trendingMovie.backdrop_path}")
+            .load(Utils.appendImgPathToUrl(trendingMovie.backdrop_path))
             .error(R.drawable.ic_img_not_available)
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(

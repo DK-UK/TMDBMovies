@@ -5,6 +5,8 @@ import com.example.myapplication.data.model.LatestTrailersModel
 import com.example.myapplication.data.model.Movie
 import com.example.myapplication.data.model.MovieResult
 import com.example.myapplication.data.model.TrendingMovies
+import com.example.myapplication.data.model.person.PersonDetails
+import com.example.myapplication.data.model.person.PersonMedia
 import com.example.myapplication.data.model.tv.TvDetails
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -47,6 +49,14 @@ interface ApiCollection {
     suspend fun getMovieRecommendations(@Path("media_type") mediaType : String = "movie", @Path("media_id") movie_id : Int, @Query("api_key") apiKey: String = BuildConfig.TMDB_API_KEY,
                                @Query("page") page: Int) : TrendingMovies
 
+    @GET("person/{person_id}")
+    suspend fun getPersonDetails(@Path("person_id") personId : Int, @Query("api_key") apiKey: String = BuildConfig.TMDB_API_KEY) : PersonDetails
+
+    @GET("person/{person_id}/combined_credits")
+    suspend fun getPersonMediaList(@Path("person_id") personId : Int, @Query("api_key") apiKey: String = BuildConfig.TMDB_API_KEY) : PersonMedia
+
+// https://api.themoviedb.org/3/person/{person_id}
+    // https://api.themoviedb.org/3/person/{person_id}/combined_credits
     // https://api.themoviedb.org/3/tv/78191?language=en-US
     //  https://api.themoviedb.org/3/movie/33/recommendations?api_key=&language=en-US&page=1
     //https://api.themoviedb.org/3/search/multi?api_key=568fb9ad3b36b1d871df2aa971f14d8c&language=en-US&query=ally&page=1&include_adult=false

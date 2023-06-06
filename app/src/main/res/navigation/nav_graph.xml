@@ -31,6 +31,9 @@
         <action
             android:id="@+id/action_movieFragment_self"
             app:destination="@id/movieFragment" />
+        <action
+            android:id="@+id/action_movieFragment_to_personFragment"
+            app:destination="@id/personFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchedItemFragment"
@@ -38,8 +41,14 @@
         android:label="fragment_searched_item"
         tools:layout="@layout/fragment_searched_item" >
         <action
-            android:id="@+id/action_searchedItemFragment_to_homeMoviesFragment"
-            app:destination="@id/homeMoviesFragment" />
+            android:id="@+id/action_searchedItemFragment_to_tvSeriesFragment"
+            app:destination="@id/tvSeriesFragment" />
+        <action
+            android:id="@+id/action_searchedItemFragment_to_movieFragment"
+            app:destination="@id/movieFragment" />
+        <action
+            android:id="@+id/action_searchedItemFragment_to_personFragment"
+            app:destination="@id/personFragment" />
     </fragment>
     <fragment
         android:id="@+id/tvSeriesFragment"
@@ -48,6 +57,21 @@
         tools:layout="@layout/fragment_tv_series" >
         <action
             android:id="@+id/action_tvSeriesFragment_self"
+            app:destination="@id/tvSeriesFragment" />
+        <action
+            android:id="@+id/action_tvSeriesFragment_to_personFragment"
+            app:destination="@id/personFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/personFragment"
+        android:name="com.example.myapplication.ui.person.PersonFragment"
+        android:label="fragment_person"
+        tools:layout="@layout/fragment_person" >
+        <action
+            android:id="@+id/action_personFragment_to_movieFragment"
+            app:destination="@id/movieFragment" />
+        <action
+            android:id="@+id/action_personFragment_to_tvSeriesFragment"
             app:destination="@id/tvSeriesFragment" />
     </fragment>
 </navigation>

@@ -23,11 +23,7 @@ import com.example.myapplication.R
 import com.example.myapplication.data.ApiCollection
 import com.example.myapplication.data.MoviesRepository
 import com.example.myapplication.data.RetrofitHelper
-import com.example.myapplication.data.model.HandleClicksModel
-import com.example.myapplication.data.model.Movie
-import com.example.myapplication.data.model.MovieResult
-import com.example.myapplication.data.model.Result
-import com.example.myapplication.data.model.TrendingMovies
+import com.example.myapplication.data.model.*
 import com.example.myapplication.data.model.tv.TvDetails
 import com.example.myapplication.ui.MoviesViewModel
 import com.example.myapplication.ui.home.MoviesFactory
@@ -59,6 +55,8 @@ class MovieFragment : Fragment() {
         if (ShareData.data != null){
             movieDetails = ShareData.data as Movie
         }
+
+        Log.e("Dhaval", "onCreate: MovieFragment : ${movieDetails}", )
     }
 
     override fun onCreateView(
@@ -68,11 +66,7 @@ class MovieFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_movie, container, false)
 
-//        val toolbar = view.findViewById(R.id.main_toolbar) as Toolbar
-//        toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_back, resources.newTheme())
-//        toolbar.setNavigationOnClickListener {
-
-//        }
+        Log.e("Dhaval", "onCreateView: MovieFragment", )
 
         val apiCollection: ApiCollection =
             RetrofitHelper.getRetrofit().create(ApiCollection::class.java)
@@ -153,7 +147,9 @@ class MovieFragment : Fragment() {
 
                 txtMovieOverview.text = movie.overview
 
-                castAdapter = CastAdapter(movie.credits.cast)
+                castAdapter = CastAdapter(movie.credits.cast){
+                    handleClicks(it)
+                }
                 recyclerMovieCast.adapter = castAdapter
 
                 CoroutineScope(Dispatchers.Main).launch {
@@ -218,6 +214,13 @@ class MovieFragment : Fragment() {
         }
         catch (e : java.lang.Exception){
             Log.e("Dhaval", "handleClicks: exception : ${e.toString()}")
+
+            val cast = handleClicksModel.modelClass as Cast
+            Log.e("Dhaval", "handleClicks: cast : ${cast.character}", )
+
+             val id = cast.id
+            ShareData.data = id
+            findNavController().navigate(R.id.action_movieFragment_to_personFragment)
         }
     }
 

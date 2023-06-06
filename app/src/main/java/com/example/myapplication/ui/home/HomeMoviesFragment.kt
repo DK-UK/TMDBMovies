@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
+
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -33,9 +34,6 @@ import com.example.myapplication.data.model.MovieResult
 import com.example.myapplication.data.model.TrendingMovies
 import com.example.myapplication.data.model.tv.TvDetails
 import com.example.myapplication.ui.*
-import com.example.myapplication.ui.movie.MovieFragment
-import com.example.myapplication.ui.searchedItem.SearchedItemFragment
-import com.example.myapplication.ui.searchedItem.SearchedItemInterface
 import com.example.myapplication.utils.Constant
 import com.example.myapplication.utils.ShareData
 import com.google.android.material.behavior.HideBottomViewOnScrollBehavior.OnScrollStateChangedListener
@@ -58,6 +56,7 @@ class HomeMoviesFragment : Fragment() {
     private lateinit var latestTrailersLayout: RelativeLayout
 
     private lateinit var headerLayout: RelativeLayout
+    private lateinit var viewBgHeaderLayout : View
     private lateinit var viewBgTrailerLayout: View
 
     private lateinit var spinnerTrendings: Spinner
@@ -86,8 +85,9 @@ class HomeMoviesFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home_movies, container, false)
 
+        Log.e("Dhaval", "onCreateView: homeMovieFragment", )
         headerLayout = view.findViewById(R.id.header_layout) as RelativeLayout
-        val viewBgHeaderLayout = view.findViewById(R.id.view_background_header_layout) as View
+        viewBgHeaderLayout = view.findViewById(R.id.view_background_header_layout)
         editSearch = view.findViewById(R.id.edit_search)
         btnSearch = view.findViewById(R.id.btn_search)
 
@@ -137,6 +137,9 @@ class HomeMoviesFragment : Fragment() {
             if(it.results.size>0) {
                 ShareData.data = it
 
+                it.results.forEach {movieResult ->
+                    searchedItem.searchedItemHashSet.add(movieResult.media_type.toString())
+                }
                 findNavController().navigate(R.id.action_homeMoviesFragment_to_searchedItemFragment)
             }
         })
@@ -488,9 +491,14 @@ class HomeMoviesFragment : Fragment() {
     }
 
     private fun setHeaderBgImage(trendingMovieImg: Drawable?) {
+        Log.e("Dhaval", "setHeaderBgImage: header bg : ${headerLayout.background}", )
         if (headerLayout != null && headerLayout.background == null) {
+
             trendingMovieImg?.let {
-                headerLayout.background = trendingMovieImg
+                Log.e("Dhaval", "setHeaderBgImage: height : ${headerLayout.height} -- width : ${headerLayout.width}", )
+                headerLayout.background = it
+//                headerLayout.background = requireActivity().getDrawable(R.drawable.ic_launcher_background)
+//                headerLayout.setBackgroundColor(requireActivity().getColor(R.color.purple_200))
             }
 
             setImageToTrailersBackground()

@@ -21,10 +21,7 @@ import com.example.myapplication.R
 import com.example.myapplication.data.ApiCollection
 import com.example.myapplication.data.MoviesRepository
 import com.example.myapplication.data.RetrofitHelper
-import com.example.myapplication.data.model.HandleClicksModel
-import com.example.myapplication.data.model.Movie
-import com.example.myapplication.data.model.MovieResult
-import com.example.myapplication.data.model.TrendingMovies
+import com.example.myapplication.data.model.*
 import com.example.myapplication.data.model.tv.TvDetails
 import com.example.myapplication.ui.MoviesViewModel
 import com.example.myapplication.ui.home.MoviesFactory
@@ -151,7 +148,9 @@ class TvSeriesFragment : Fragment() {
 
                 txtTVOverview.text = tv.overview
 
-                castAdapter = CastAdapter(tv.credits.cast)
+                castAdapter = CastAdapter(tv.credits.cast){
+                    handleClicks(it)
+                }
                 recyclerMovieCast.adapter = castAdapter
 
                 tv.seasons.let {
@@ -249,6 +248,13 @@ class TvSeriesFragment : Fragment() {
         }
         catch (e : java.lang.Exception){
             Log.e("Dhaval", "handleClicks: exception : ${e.toString()}")
+
+            val cast = handleClicksModel.modelClass as Cast
+            Log.e("Dhaval", "handleClicks: cast : ${cast.character}", )
+
+            val id = cast.id
+            ShareData.data = id
+            findNavController().navigate(R.id.action_tvSeriesFragment_to_personFragment)
         }
     }
 
