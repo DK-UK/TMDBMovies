@@ -15,6 +15,7 @@ import com.example.myapplication.R
 import com.example.myapplication.data.model.Cast
 import com.example.myapplication.data.model.HandleClicksModel
 import com.example.myapplication.utils.Utils
+import okhttp3.internal.http.ExchangeCodec
 
 class CastAdapter(val casts : List<Cast>,
                   private val handleClick : (HandleClicksModel) -> Unit) : RecyclerView.Adapter<CastAdapter.viewHolder>() {
@@ -38,26 +39,31 @@ class CastAdapter(val casts : List<Cast>,
     }
 
     override fun onBindViewHolder(holder: viewHolder, position: Int) {
-        val cast = casts[position]
+        try {
+            val cast = casts[position]
 
-        Log.e("Dhaval", "onBindViewHolder: cast : ${cast}", )
-        val width = Utils.getScreenWidth() / 2 - 200
-        val height = (width * 1.50).toInt()
+            Log.e("Dhaval", "onBindViewHolder: cast : ${cast}",)
+            val width = Utils.getScreenWidth() / 2 - 200
+            val height = (width * 1.50).toInt()
 
-        val layoutParams = LinearLayout.LayoutParams(width, height)
-        holder.cardMovie.layoutParams = layoutParams
+            val layoutParams = LinearLayout.LayoutParams(width, height)
+            holder.cardMovie.layoutParams = layoutParams
 
-        Glide.with(holder.itemView.context)
-            .load(Utils.appendImgPathToUrl(cast.profile_path))
-            .error(R.drawable.ic_img_not_available)
-            .into(holder.castPosterImg)
+            Glide.with(holder.itemView.context)
+                .load(Utils.appendImgPathToUrl(cast.profile_path))
+                .error(R.drawable.ic_img_not_available)
+                .into(holder.castPosterImg)
 
-        holder.txtCastName.text = cast.name
-        holder.txtCastCharacterName.text = cast.character
+            holder.txtCastName.text = cast.name
+            holder.txtCastCharacterName.text = cast.character
 //        holder.txtCaracterEpisodes.text = ""
 
-        holder.cardMovie.setOnClickListener {
-            handleClick(HandleClicksModel(false, 0, cast))
+            holder.cardMovie.setOnClickListener {
+                handleClick(HandleClicksModel(false, 0, cast))
+            }
+        }
+        catch (e : java.lang.Exception){
+
         }
     }
 }

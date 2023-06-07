@@ -36,24 +36,29 @@ class TVSeasonAdapter(private var tvSeasons : List<Season>) : RecyclerView.Adapt
     }
 
     private fun bind(holder: viewHolder, season: Season) {
-        val width = Utils.getScreenWidth() / 2 - 100
-        val height = (width * 1.25).toInt()
+        try {
+            val width = Utils.getScreenWidth() / 2 - 100
+            val height = (width * 1.25).toInt()
 
-        val layoutParams = RelativeLayout.LayoutParams(width, height)
-        holder.imgPoster.layoutParams = layoutParams
+            val layoutParams = RelativeLayout.LayoutParams(width, height)
+            holder.imgPoster.layoutParams = layoutParams
 
-        Glide.with(holder.itemView.context)
-            .load(Utils.appendImgPathToUrl(season.poster_path))
-            .error(R.drawable.ic_img_not_available)
-            .into(holder.imgPoster)
+            Glide.with(holder.itemView.context)
+                .load(Utils.appendImgPathToUrl(season.poster_path))
+                .error(R.drawable.ic_img_not_available)
+                .into(holder.imgPoster)
 
-        holder.seasonName.text = season.name
-        holder.seasonReleaseYear.text = season.air_date?.let {
-            Utils.convertDate(it, "yyyy")
+            holder.seasonName.text = season.name
+            holder.seasonReleaseYear.text = season.air_date?.let {
+                Utils.convertDate(it, "yyyy")
+            }
+
+            holder.seasonEpisodeCount.text = "| ${season.episode_count} Episodes"
+            holder.seasonOverview.text = season.overview
         }
+        catch (e : java.lang.Exception){
 
-        holder.seasonEpisodeCount.text = "| ${season.episode_count} Episodes"
-        holder.seasonOverview.text = season.overview
+        }
     }
 
     override fun getItemCount(): Int {

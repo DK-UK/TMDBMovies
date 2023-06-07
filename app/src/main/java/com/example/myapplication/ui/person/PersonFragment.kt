@@ -76,25 +76,39 @@ class PersonFragment : Fragment() {
 
         viewModel._personDetailsLiveData.observe(requireActivity(), Observer {
             it?.let {
+                try {
+                    Log.e("Dhaval", "onCreateView: personDetails : ${it}",)
+                    // checked is fragment is added or not
+                    // otherwise it will crash the  app
+                    if (isAdded) {
+                        val width = Utils.getScreenWidth() / 2 - 200
+                        val height = (width * 1.75).toInt()
 
-                if (isAdded) {
-                    val width = Utils.getScreenWidth() / 2 - 200
-                    val height = (width * 1.75).toInt()
+                        val params = LinearLayout.LayoutParams(width, height)
+                        imgPerson.layoutParams = params
 
-                    val params = LinearLayout.LayoutParams(width, height)
-                    imgPerson.layoutParams = params
+                        Glide.with(requireActivity())
+                            .load(Utils.appendImgPathToUrl(it.profile_path))
+                            .error(requireActivity().getDrawable(R.drawable.ic_img_not_available))
+                            .into(imgPerson)
 
-                    Glide.with(requireActivity())
-                        .load(Utils.appendImgPathToUrl(it.profile_path))
-                        .error(requireActivity().getDrawable(R.drawable.ic_img_not_available))
-                        .into(imgPerson)
+                        txtPersonName.text = it.name
+                        txtBiography.text = it.biography
+                        txtKnownFor.text = it.known_for_department
+                        txtGender.text = if (it.gender == 2) "Male" else "Female"
+                        txtBirthday.text = it.birthday.let {
+                            if (it != null && it.isNotEmpty()) {
+                                Utils.convertDate(it, "dd/MM/YYYY")
+                            } else {
+                                "-"
+                            }
+                        }
 
-                    txtPersonName.text = it.name
-                    txtBiography.text = it.biography
-                    txtKnownFor.text = it.known_for_department
-                    txtGender.text = if (it.gender == 2) "Male" else "Female"
-                    txtBirthday.text = Utils.convertDate(it.birthday, "dd/MM/YYYY")
-                    txtBirthPlace.text = it.place_of_birth
+                        txtBirthPlace.text = it.place_of_birth
+                    }
+                }
+                catch (e : java.lang.Exception){
+
                 }
             }
         })

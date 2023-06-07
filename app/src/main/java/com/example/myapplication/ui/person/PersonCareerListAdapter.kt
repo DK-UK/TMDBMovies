@@ -45,22 +45,28 @@ class PersonCareerListAdapter(
 
     public fun bind(holder: viewHolder, personCareer: MovieResult) {
 
-        holder.txtReleaseYear.text = personCareer.release_date.let {
-            if (it != null && it.isNotEmpty()) {
-                Utils.convertDate(it, "yyyy")
-            } else {
-                "-"
+        try {
+            holder.txtReleaseYear.text = personCareer.release_date.let {
+                if (it != null && it.isNotEmpty()) {
+                    Utils.convertDate(it, "yyyy")
+                } else {
+                    "-"
+                }
+            }
+
+            holder.txtTitle.text = personCareer.title
+            holder.episodesDone.text =
+                if (personCareer.episode_count > 0) "(${personCareer.episode_count} episodes)" else ""
+
+            holder.character.text = "as ${personCareer.character}"
+
+            holder.personCareerLayout.setOnClickListener {
+                handleClick(personCareer)
             }
         }
+        catch (e : Exception){
 
-    holder.txtTitle.text = personCareer.title
-    holder.episodesDone.text = if (personCareer.episode_count > 0) "(${personCareer.episode_count} episodes)" else ""
-
-    holder.character.text = "as ${personCareer.character}"
-
-    holder.personCareerLayout.setOnClickListener {
-        handleClick(personCareer)
-    }
+        }
 }
 
 public fun refreshList(personMedia: PersonMedia) {

@@ -83,21 +83,35 @@ class TrendingMovieAdapter(var trendingMoviesModel: TrendingMovies,
         trendingMovie: MovieResult,
         handleClick: (HandleClicksModel) -> Unit,
     ) {
-        val width = Utils.getScreenWidth() / 2 - 150
-        val height = (width * 1.50).toInt()
+        try {
+            val width = Utils.getScreenWidth() / 2 - 150
+            val height = (width * 1.50).toInt()
 
-        val layoutParams = LinearLayout.LayoutParams(width, height)
-        holder.cardMovie.layoutParams = layoutParams
+            val layoutParams = LinearLayout.LayoutParams(width, height)
+            holder.cardMovie.layoutParams = layoutParams
 
-        Glide.with(holder.itemView.context)
-            .load(Utils.appendImgPathToUrl(trendingMovie.poster_path))
-            .error(R.drawable.ic_img_not_available)
-            .into(holder.moviePosterImg)
+            Glide.with(holder.itemView.context)
+                .load(Utils.appendImgPathToUrl(trendingMovie.poster_path))
+                .error(R.drawable.ic_img_not_available)
+                .into(holder.moviePosterImg)
 
-        holder.txtMovieTitle.text = trendingMovie.title
-        holder.txtMovieReleaseDate.text = if (trendingMovie.release_date != null) Utils.convertDate(trendingMovie.release_date, "dd MMM yy") else ""
-        holder.trendingMovieLayout.setOnClickListener {
-            handleClick(HandleClicksModel(type = holder.itemViewType, modelClass = trendingMovie))
+            holder.txtMovieTitle.text = trendingMovie.title
+            holder.txtMovieReleaseDate.text =
+                if (trendingMovie.release_date != null) Utils.convertDate(
+                    trendingMovie.release_date,
+                    "dd MMM yy"
+                ) else ""
+            holder.trendingMovieLayout.setOnClickListener {
+                handleClick(
+                    HandleClicksModel(
+                        type = holder.itemViewType,
+                        modelClass = trendingMovie
+                    )
+                )
+            }
+        }
+        catch (e : Exception){
+
         }
     }
 
@@ -107,51 +121,66 @@ class TrendingMovieAdapter(var trendingMoviesModel: TrendingMovies,
         handleClick: (HandleClicksModel) -> Unit,
     ) {
 
-        val width = Utils.getScreenWidth() / 2 + 160
-        val height = (width) / 2 + 40
+        try {
+            val width = Utils.getScreenWidth() / 2 + 160
+            val height = (width) / 2 + 40
 
-        val layoutParams = LinearLayout.LayoutParams(width, height)
-        holder.cardTrailers.layoutParams = layoutParams
+            val layoutParams = LinearLayout.LayoutParams(width, height)
+            holder.cardTrailers.layoutParams = layoutParams
 
-        Glide.with(holder.itemView.context)
-            .load(Utils.appendImgPathToUrl(trendingMovie.backdrop_path))
-            .error(R.drawable.ic_img_not_available)
-            .listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    isFirstResource: Boolean
-                ): Boolean {
+            Glide.with(holder.itemView.context)
+                .load(Utils.appendImgPathToUrl(trendingMovie.backdrop_path))
+                .error(R.drawable.ic_img_not_available)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
 
-                    return false
-                }
-
-                override fun onResourceReady(
-                    resource: Drawable?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    val drawable = resource
-                    Log.e("Dhaval", "onResourceReady: ${resource}")
-                    drawable?.let {
-                        trendingMovie.drawable = it
-                        handleClick(HandleClicksModel(type = holder.itemViewType, modelClass = trendingMovie))
+                        return false
                     }
-                    return false
-                }
 
-            })
-            .into(holder.trailerPosterImg)
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        val drawable = resource
+                        Log.e("Dhaval", "onResourceReady: ${resource}")
+                        drawable?.let {
+                            trendingMovie.drawable = it
+                            handleClick(
+                                HandleClicksModel(
+                                    type = holder.itemViewType,
+                                    modelClass = trendingMovie
+                                )
+                            )
+                        }
+                        return false
+                    }
 
-        holder.txtTrailerTitle.text = trendingMovie.title
-        holder.trailerLayout.setOnClickListener {
-            Log.e("Dhaval", "bindTrailerViews: ", )
-            handleClick(HandleClicksModel(isItemClicked = true, type = holder.itemViewType, modelClass = trendingMovie))
+                })
+                .into(holder.trailerPosterImg)
+
+            holder.txtTrailerTitle.text = trendingMovie.title
+            holder.trailerLayout.setOnClickListener {
+                Log.e("Dhaval", "bindTrailerViews: ",)
+                handleClick(
+                    HandleClicksModel(
+                        isItemClicked = true,
+                        type = holder.itemViewType,
+                        modelClass = trendingMovie
+                    )
+                )
+            }
         }
+        catch (e : Exception){
 
+        }
     }
 
     public fun refreshMovieList(trendingMoviesModel: TrendingMovies){
