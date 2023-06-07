@@ -84,6 +84,8 @@ class HomeMoviesFragment : Fragment() {
 
     private lateinit var navController: NavController
 
+    private var showHeaderBgImage = false
+
     companion object searchedItem {
         public var searchedItemHashSet: HashSet<String> = HashSet()
     }
@@ -522,7 +524,7 @@ class HomeMoviesFragment : Fragment() {
 
     private fun setHeaderBgImage(trendingMovieImg: Drawable?) {
         Log.e("Dhaval", "setHeaderBgImage: header bg : ${headerLayout.background}")
-        if (headerLayout != null && headerLayout.background == null) {
+        if (headerLayout != null/* && headerLayout.background == null && !showHeaderBgImage*/) {
 
             trendingMovieImg?.let {
                 Log.e(
@@ -530,6 +532,8 @@ class HomeMoviesFragment : Fragment() {
                     "setHeaderBgImage: height : ${headerLayout.height} -- width : ${headerLayout.width}",
                 )
                 headerLayout.background = it
+//                viewBgHeaderLayout.background = it
+//                showHeaderBgImage = true
 //                headerLayout.background = requireActivity().getDrawable(R.drawable.ic_launcher_background)
 //                headerLayout.setBackgroundColor(requireActivity().getColor(R.color.purple_200))
             }
