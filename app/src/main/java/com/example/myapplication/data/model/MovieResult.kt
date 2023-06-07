@@ -37,4 +37,4 @@ data class MovieResult(
     val order : Int,
     val episode_count : Int,
     var drawable : Drawable? = null
-)
+) : java.io.Serializable

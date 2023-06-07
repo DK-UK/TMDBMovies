@@ -1,5 +1,6 @@
 package com.example.myapplication.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -71,10 +72,14 @@ class MoviesViewModel(private val moviesRepository: MoviesRepository) : ViewMode
         return moviesRepository.getLatestTrailerVideos(mediaType, movieId)
     }
 
-    fun getSearchedResults(query : String, page: Int = 1) {
-        CoroutineScope(Dispatchers.Main).launch {
+    suspend fun getSearchedResults(query : String, page: Int = 1): TrendingMovies {
+        Log.e("Dhaval", "getSearchedResults: req", )
+            return moviesRepository.getSearchedResults(query, page)
+
+       /* CoroutineScope(Dispatchers.Main).launch {
             searchedResultsMutableLiveData.value = moviesRepository.getSearchedResults(query, page)
-        }
+            Log.e("Dhaval", "getSearchedResults: response : ${searchedResultsMutableLiveData.value}", )
+        }*/
     }
 
     suspend fun getMovieDetails(movieId : Int): Movie {

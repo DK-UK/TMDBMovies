@@ -1,10 +1,11 @@
 package com.example.myapplication.utils
 
-import android.app.Activity
-import android.content.Context
 import android.content.res.Resources
-import android.util.DisplayMetrics
+import android.os.Bundle
 import android.util.Log
+import androidx.annotation.IdRes
+import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -42,5 +43,23 @@ object Utils {
 
     fun appendImgPathToUrl(imgPath : String?) : String{
         return "https://image.tmdb.org/t/p/w780${imgPath}"
+    }
+
+    fun NavController.safeNavigate(
+        @IdRes currentDestinationId: Int,
+        @IdRes id: Int,
+        args: Bundle? = null
+    ) {
+        if (currentDestinationId == currentDestination?.id) {
+            navigate(id, args)
+        }
+    }
+
+    fun NavController.safeNavigate(direction: NavDirections) {
+        Log.d("Dhaval", "Click happened")
+        currentDestination?.getAction(direction.actionId)?.run {
+            Log.d("Dhaval", "Click Propagated")
+            navigate(direction)
+        }
     }
 }
