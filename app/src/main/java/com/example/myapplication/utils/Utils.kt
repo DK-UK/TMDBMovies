@@ -1,9 +1,14 @@
 package com.example.myapplication.utils
 
+import android.content.Context
+import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.res.Resources
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.util.Log
 import androidx.annotation.IdRes
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import java.text.SimpleDateFormat
@@ -62,4 +67,11 @@ object Utils {
             navigate(direction)
         }
     }
+
+    fun isInternetAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isAvailable && activeNetworkInfo.isConnected
+    }
+
 }

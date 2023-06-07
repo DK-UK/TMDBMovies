@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -14,15 +13,50 @@
         android:background="@color/purple_500"
         app:title="@string/app_name"
         app:titleTextColor="@color/white"
+        android:layout_alignParentTop="true"
         />
 
+    <LinearLayout
+        android:id="@+id/layout_connectivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        >
+
+        <ImageView
+            android:id="@+id/img_connectivity"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/baseline_wifi_off"
+            android:layout_gravity="center_horizontal"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Connection"
+            android:textColor="@color/default_grey"
+            android:textSize="20sp"
+        />
+        <Button
+            android:id="@+id/btn_retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Retry"
+            android:layout_gravity="center_horizontal"
+            />
+
+    </LinearLayout>
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/home_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/main_toolbar"
         app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_graph"
+        tools:visibility="gone"
         />
 
-</LinearLayout>
+</RelativeLayout>
