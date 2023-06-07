@@ -22,8 +22,13 @@ To get started, clone this repository and open it in Android Studio. You will ne
 * View details about a movie, including the cast, crew, release date, and rating
 * Watch trailers
 
+## Screen Shots
+
+<img src="https://github.com/DK-UK/TMDBMovies/blob/master/home_screen.jpg" alt="Alt text" width="500" title="Home Screen">
+<img src="https://github.com/DK-UK/TMDBMovies/blob/master/latest_trailers.jpg" alt="Alt text" width="500" title="Latest Trailers">
+<img src="https://github.com/DK-UK/TMDBMovies/blob/master/movie_screen.jpg" alt="Alt text" width="500" title="Movie Screen">
+<img src="https://github.com/DK-UK/TMDBMovies/blob/master/searched_item.jpg" alt="Alt text" width="500" title="Searched Items">
+
 ## Contributing
 
 If you would like to contribute to this project, please fork the repository and make your changes. Then, submit a pull request.
-
-<img src="https://github.com/DK-UK/TMDBMovies/blob/master/home_screen.jpg" alt="Alt text" width="500" title="Optional title">
